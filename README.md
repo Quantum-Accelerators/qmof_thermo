@@ -1,1 +1,1 @@
-# qmof_thermo
+# QMOF-Thermo
