@@ -1,0 +1,12 @@
+LICENSE.md
+README.md
+pyproject.toml
+src/qmof_hull.egg-info/PKG-INFO
+src/qmof_hull.egg-info/SOURCES.txt
+src/qmof_hull.egg-info/dependency_links.txt
+src/qmof_hull.egg-info/entry_points.txt
+src/qmof_hull.egg-info/requires.txt
+src/qmof_hull.egg-info/top_level.txt
+src/qmof_thermo/__init__.py
+src/qmof_thermo/core/__init__.py
+src/qmof_thermo/core/setup_pd.py

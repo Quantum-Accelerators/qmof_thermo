@@ -1,3 +1,10 @@
 # template
 
 A simple-to-use resource for creating open-source Python packages.
+
+data/references/*
+data/external/*
+data/inputs/*
+data/relaxations/*
+models/*
+test.ipynb

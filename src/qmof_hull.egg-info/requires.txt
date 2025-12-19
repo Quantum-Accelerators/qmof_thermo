@@ -1,0 +1,7 @@
+pymatgen>=2024.0.0
+pandas>=1.5
+matplotlib>=3.5
+
+[dev]
+pytest
+build

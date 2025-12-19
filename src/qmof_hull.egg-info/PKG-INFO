@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: qmof-hull
+Version: 0.1.0
+Summary: Tiny helper package for energy-above-hull phase diagram construction
+Author: Aryan Saha
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+Requires-Dist: pymatgen>=2024.0.0
+Requires-Dist: pandas>=1.5
+Requires-Dist: matplotlib>=3.5
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: build; extra == "dev"
+Dynamic: license-file
+
+# QMOF-Thermo

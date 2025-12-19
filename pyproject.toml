@@ -1,0 +1,29 @@
+[project]
+name = "qmof-hull"
+version = "0.1.0"
+description = "Tiny helper package for energy-above-hull phase diagram construction"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Aryan Saha" }
+]
+
+dependencies = [
+  "pymatgen>=2024.0.0",
+  "pandas>=1.5",
+  "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "build",
+]
+
+[project.scripts]
+qmof-hull-from-csv = "qmof_hull.cli:main"
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
