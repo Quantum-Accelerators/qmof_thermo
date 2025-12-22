@@ -1,10 +1,88 @@
-# template
+# quacc specific ignores
+symlink*
+quacc-20*
+tmp*
+cache*
+*test_results
+*test_scratch
+package-lock*
+package.json
 
-A simple-to-use resource for creating open-source Python packages.
+# Workflow ignores
+*parsl.log
+runinfo
+covalent.conf
 
-data/references/*
-data/external/*
-data/inputs/*
-data/relaxations/*
-models/*
-test.ipynb
+# Docs
+.cache/
+docs/reference/*
+*doctrees*
+/site
+
+# Prettier
+node_modules*
+
+# Python ignores
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+.spyderproject
+.spyproject
+
+# Unit test ignores
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# OS ignores
+.DS_Store
+
+# Editors ignores
+.vscode*
+.idea/
+
+# Environments
+.env
+.venv
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
