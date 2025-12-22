@@ -1,4 +1,5 @@
-from logging import basicConfig, getLevelName
+from logging import basicConfig
 
-basicConfig(level=getLevelName("INFO"))
+basicConfig(level="INFO")
+
 
