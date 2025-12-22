@@ -14,9 +14,7 @@ This package provides a streamlined workflow to:
 ### 1. Clone and Install the Package
 
 ```bash
-git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
-cd qmof_thermo
-pip install -e .
+pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
 ```
 
 ### 2. Download the QMOF Thermodynamics Database
