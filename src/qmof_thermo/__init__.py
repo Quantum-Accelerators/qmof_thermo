@@ -1,5 +1,3 @@
-from logging import basicConfig
+import logging
 
-basicConfig(level="INFO")
-
-
+logging.basicConfig(level=logging.INFO)
