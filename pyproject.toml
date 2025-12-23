@@ -27,3 +27,12 @@ qmof-hull-from-csv = "qmof_hull.cli:main"
 [build-system]
 requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+minversion = "6.0"
+addopts = ["-p no:warnings"]
+xfail_strict = true
+log_cli_level = "warn"
+pythonpath = "src"
+testpaths = ["tests"]
