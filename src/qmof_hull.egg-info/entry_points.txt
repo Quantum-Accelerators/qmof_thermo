@@ -1,2 +1,0 @@
-[console_scripts]
-qmof-hull-from-csv = qmof_hull.cli:main

@@ -2,24 +2,27 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import pandas as pd
-from monty.json import MontyEncoder
 from pymatgen.core import Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from monty.serialization import dumpfn
+import logging
+from logging import getLogger
+LOGGER = getLogger(__name__)
+
 
 
 @dataclass
 class HullEntry:
     """Container for a single reference hull entry."""
+
     mpid: str
     structure: Structure
-    energy: float           # total energy (eV)
+    energy: float  # total energy (eV)
     elements: frozenset[str]  # e.g. set ({"Ba", "O", "V"})
 
 
@@ -34,17 +37,20 @@ def load_hull_entries(
     mpid_key: str = "mpid",
     energy_key: str = "energy_total",
     ehull_key: str = "energy_above_hull",
+    log_level : str = "INFO"
 ) -> List[HullEntry]:
     """
     Load all hull entries (energy_above_hull == 0) with structures and energies.
     """
+    logging.basicConfig() 
+    LOGGER.setLevel(getattr(logging, log_level.upper()))
 
-    print(f"Loading structures from: {structures_path}")
+    LOGGER.info(f"Loading structures from: {structures_path}")
     with structures_path.open() as f:
         struct_records = json.load(f)
-    print(f"Loaded {len(struct_records)} structure records.")
+    LOGGER.info(f"Loaded {len(struct_records)} structure records.")
 
-    print(f"Loading thermo data from: {thermo_path}")
+    LOGGER.info(f"Loading thermo data from: {thermo_path}")
     df = pd.read_json(thermo_path)
 
     if ehull_key not in df.columns:
@@ -57,8 +63,8 @@ def load_hull_entries(
     # Only hull entries
     hull_df = df[df[ehull_key] == 0].copy()
     hull_mpids = hull_df[mpid_key].tolist()
-    print(f"Found {len(hull_mpids)} hull MPIDs with {ehull_key} == 0.")
-    print(f"Using {len(hull_mpids)} MPIDs as reference hull entries.")
+    LOGGER.info(f"Found {len(hull_mpids)} hull MPIDs with {ehull_key} == 0.")
+    LOGGER.info(f"Using {len(hull_mpids)} MPIDs as reference hull entries.")
 
     # Lookup from mpid -> energy_total
     hull_energy_lookup: Dict[str, float] = dict(
@@ -80,9 +86,9 @@ def load_hull_entries(
         if "structure" not in rec:
             missing_struct_count += 1
             if missing_struct_count <= 10:
-                print(f"Warning: structure missing for {mpid}, skipping.")
+                LOGGER.debug(f"Warning: structure missing for {mpid}, skipping.")
             elif missing_struct_count == 11:
-                print("Further missing structure warnings suppressed...")
+                LOGGER.debug("Further missing structure warnings suppressed...")
             continue
 
         struct_obj = rec["structure"]
@@ -91,7 +97,7 @@ def load_hull_entries(
         elif isinstance(struct_obj, Structure):
             struct = struct_obj
         else:
-            print(
+            LOGGER.debug(
                 f"Warning: structure for {mpid} is not a dict or Structure "
                 f"(type={type(struct_obj)}), skipping."
             )
@@ -99,7 +105,7 @@ def load_hull_entries(
 
         struct_lookup[mpid] = struct
 
-    print(
+    LOGGER.info(
         f"Structures available for {len(struct_lookup)} "
         f"of {len(hull_mpids)} hull MPIDs."
     )
@@ -118,9 +124,7 @@ def load_hull_entries(
         all_entries.append(HullEntry(mpid, struct, energy, elements))
         used_count += 1
 
-    print(
-        f"\nTotal hull entries with both energy and structure: {used_count}\n"
-    )
+    LOGGER.info(f"\nTotal hull entries with both energy and structure: {used_count}\n")
 
     return all_entries
 
@@ -128,6 +132,7 @@ def load_hull_entries(
 def build_phase_diagrams_by_space(
     entries: List[HullEntry],
     output_dir: Path,
+    log_level : str = "INFO"
 ) -> None:
     """
     For each unique chemical space S (set of elements), build a PhaseDiagram
@@ -135,6 +140,9 @@ def build_phase_diagrams_by_space(
 
     Also writes a chemical_space_to_mpids.json mapping.
     """
+
+    logging.basicConfig() 
+    LOGGER.setLevel(getattr(logging, log_level.upper()))
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -144,19 +152,19 @@ def build_phase_diagrams_by_space(
     # Keep only multi-element spaces for now
     spaces = {s for s in all_spaces if len(s) > 1}
 
-    print(f"Total unique chemical spaces (multi-element): {len(spaces)}")
-
-    mpid_to_entry: Dict[str, HullEntry] = {e.mpid: e for e in entries}
+    LOGGER.info(f"Total unique chemical spaces (multi-element): {len(spaces)}")
 
     # 3. Build PhaseDiagram per chemical space
     chemical_space_to_mpids: Dict[str, List[str]] = {}
 
     all_entries = entries
 
-    # start sorting through different chemical spaces 
-    for i, space in enumerate(sorted(spaces, key=lambda s: (len(s), sorted(s))), start=1):
+    # start sorting through different chemical spaces
+    for i, space in enumerate(
+        sorted(spaces, key=lambda s: (len(s), sorted(s))), start=1
+    ):
         space_tuple = tuple(sorted(space))  # for pretty printing / filenames
-        print(
+        LOGGER.info(
             f"Building PhaseDiagram for chemical space {space_tuple} "
             f"({i}/{len(spaces)})..."
         )
@@ -173,7 +181,7 @@ def build_phase_diagrams_by_space(
 
         if len(entries_for_space) < len(space):
             # Not enough entries to possibly have all elemental references
-            print(
+            LOGGER.info(
                 f"  Skipping {space_tuple}: only {len(entries_for_space)} entries, "
                 f"need at least {len(space)} for elemental refs."
             )
@@ -188,7 +196,7 @@ def build_phase_diagrams_by_space(
 
         missing_elements = [el for el in space if el not in elemental_refs_present]
         if missing_elements:
-            print(
+            LOGGER.debug(
                 f"  Skipping {space_tuple}: missing elemental references for "
                 f"{missing_elements}"
             )
@@ -198,16 +206,14 @@ def build_phase_diagrams_by_space(
         try:
             pd = PhaseDiagram(entries_for_space)
         except Exception as exc:
-            print(
-                f"  Error constructing PhaseDiagram for {space_tuple}: {exc}"
-            )
+            LOGGER.info(f"  Error constructing PhaseDiagram for {space_tuple}: {exc}")
             continue
 
         # Save PD as JSON
         filename = f"{space_tuple}_phase_diagram.json"
         pd_path = output_dir / filename
         dumpfn(pd, pd_path)
-        print(f"  Saved PhaseDiagram to: {pd_path}")
+        LOGGER.info(f"  Saved PhaseDiagram to: {pd_path}")
 
         # Store mapping for later use
         chemical_space_to_mpids[str(space_tuple)] = sorted(set(mpids_for_space))
@@ -216,9 +222,7 @@ def build_phase_diagrams_by_space(
     mapping_path = output_dir / "chemical_space_to_mpids.json"
     with mapping_path.open("w") as f:
         json.dump(chemical_space_to_mpids, f, indent=2)
-    print(
-        f"\nSaved chemical space → MPIDs mapping to: {mapping_path}"
-    )
+    LOGGER.info(f"\nSaved chemical space → MPIDs mapping to: {mapping_path}")
 
 
 def main():
@@ -263,7 +267,7 @@ def main():
         type=str,
         default="energy_above_hull",
         help="Column name for energy above hull in thermo JSON "
-             "(default: 'energy_above_hull').",
+        "(default: 'energy_above_hull').",
     )
 
     args = parser.parse_args()
@@ -288,14 +292,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-"""
-i need you to help make a readme for my github repository.
-
-the main purpose is for one to easily be able to pass in a Atoms strucutre of a MOF, optionally run a relaxation via an MLIP method, and then to be able to get it's energy above hull value in one line.
-
-There are many steps needed to set up. the first one is to install this package as an editable package. it's located here: https://github.com/Quantum-Accelerators/qmof_thermo
-
-After this, I need them to load in the qmof-thermo database files. These can be accessed on https://doi.org/10.6084/m9.figshare.13147324). One needs to download the qmof-thermo database and place the reference_thermo_structures.json and reference_structures.json in the the data/external/ folder. 
-"""

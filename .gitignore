@@ -8,6 +8,20 @@ cache*
 package-lock*
 package.json
 
+# Data
+data/inputs/*
+data/references/*
+data/external/*
+data/relaxations/*
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+#checkpoints
+models/*
+
 # Workflow ignores
 *parsl.log
 runinfo
@@ -50,6 +64,7 @@ profile_default/
 ipython_config.py
 .spyderproject
 .spyproject
+.pyc
 
 # Unit test ignores
 htmlcov/
