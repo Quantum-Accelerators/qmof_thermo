@@ -1,5 +1,8 @@
 from qmof_thermo import setup_pd
 from pathlib import Path
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 structures_path = Path("data/external/reference_thermo_structures.json")
 thermo_path = Path("data/external/reference_thermo.json")

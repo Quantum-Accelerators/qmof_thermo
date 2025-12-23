@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,10 +9,9 @@ import pandas as pd
 from pymatgen.core import Structure
 from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from monty.serialization import dumpfn
-import logging
 from logging import getLogger
-LOGGER = getLogger(__name__)
 
+LOGGER = getLogger(__name__)
 
 
 @dataclass
@@ -37,13 +35,10 @@ def load_hull_entries(
     mpid_key: str = "mpid",
     energy_key: str = "energy_total",
     ehull_key: str = "energy_above_hull",
-    log_level : str = "INFO"
-) -> List[HullEntry]:
+) -> list[HullEntry]:
     """
     Load all hull entries (energy_above_hull == 0) with structures and energies.
     """
-    logging.basicConfig() 
-    LOGGER.setLevel(getattr(logging, log_level.upper()))
 
     LOGGER.info(f"Loading structures from: {structures_path}")
     with structures_path.open() as f:
@@ -86,9 +81,9 @@ def load_hull_entries(
         if "structure" not in rec:
             missing_struct_count += 1
             if missing_struct_count <= 10:
-                LOGGER.debug(f"Warning: structure missing for {mpid}, skipping.")
+                LOGGER.warning(f"Warning: structure missing for {mpid}, skipping.")
             elif missing_struct_count == 11:
-                LOGGER.debug("Further missing structure warnings suppressed...")
+                LOGGER.warning("Further missing structure warnings suppressed...")
             continue
 
         struct_obj = rec["structure"]
@@ -97,7 +92,7 @@ def load_hull_entries(
         elif isinstance(struct_obj, Structure):
             struct = struct_obj
         else:
-            LOGGER.debug(
+            LOGGER.warning(
                 f"Warning: structure for {mpid} is not a dict or Structure "
                 f"(type={type(struct_obj)}), skipping."
             )
@@ -130,9 +125,7 @@ def load_hull_entries(
 
 
 def build_phase_diagrams_by_space(
-    entries: List[HullEntry],
-    output_dir: Path,
-    log_level : str = "INFO"
+    entries: List[HullEntry], output_dir: Path
 ) -> None:
     """
     For each unique chemical space S (set of elements), build a PhaseDiagram
@@ -140,9 +133,6 @@ def build_phase_diagrams_by_space(
 
     Also writes a chemical_space_to_mpids.json mapping.
     """
-
-    logging.basicConfig() 
-    LOGGER.setLevel(getattr(logging, log_level.upper()))
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -163,15 +153,14 @@ def build_phase_diagrams_by_space(
     for i, space in enumerate(
         sorted(spaces, key=lambda s: (len(s), sorted(s))), start=1
     ):
-        space_tuple = tuple(sorted(space))  # for pretty printing / filenames
+        space_tuple = tuple(sorted(space))
         LOGGER.info(
             f"Building PhaseDiagram for chemical space {space_tuple} "
             f"({i}/{len(spaces)})..."
         )
 
-        # set up dicts, entries in chem space + mpid in chem space
-        entries_for_space: List[PDEntry] = []
-        mpids_for_space: List[str] = []
+        entries_for_space: list[PDEntry] = []
+        mpids_for_space: list[str] = []
 
         # add entries/mpids to lists
         for e in all_entries:
@@ -213,7 +202,7 @@ def build_phase_diagrams_by_space(
         filename = f"{space_tuple}_phase_diagram.json"
         pd_path = output_dir / filename
         dumpfn(pd, pd_path)
-        LOGGER.info(f"  Saved PhaseDiagram to: {pd_path}")
+        LOGGER.info(f"Saved PhaseDiagram to: {pd_path}")
 
         # Store mapping for later use
         chemical_space_to_mpids[str(space_tuple)] = sorted(set(mpids_for_space))
@@ -222,73 +211,4 @@ def build_phase_diagrams_by_space(
     mapping_path = output_dir / "chemical_space_to_mpids.json"
     with mapping_path.open("w") as f:
         json.dump(chemical_space_to_mpids, f, indent=2)
-    LOGGER.info(f"\nSaved chemical space → MPIDs mapping to: {mapping_path}")
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=(
-            "Build reference PhaseDiagram objects for each chemical space "
-            "from reference_thermo_structures.json and reference_thermo.json."
-        )
-    )
-    parser.add_argument(
-        "--structures_json",
-        type=str,
-        default="data/external/reference_thermo_structures.json",
-        help="Path to data/external/reference_thermo_structures.json",
-    )
-    parser.add_argument(
-        "--thermo_json",
-        type=str,
-        default="data/external/reference_thermo.json",
-        help="Path to data/external/reference_thermo.json",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=str,
-        default="data/references",
-        help="Directory to write phase diagram JSONs and mapping file.",
-    )
-    parser.add_argument(
-        "--mpid-key",
-        type=str,
-        default="mpid",
-        help="Key name for MPID in both JSON files (default: 'mpid').",
-    )
-    parser.add_argument(
-        "--energy-key",
-        type=str,
-        default="energy_total",
-        help="Column name for total energy in thermo JSON (default: 'energy_total').",
-    )
-    parser.add_argument(
-        "--ehull-key",
-        type=str,
-        default="energy_above_hull",
-        help="Column name for energy above hull in thermo JSON "
-        "(default: 'energy_above_hull').",
-    )
-
-    args = parser.parse_args()
-
-    structures_path = Path(args.structures_json).resolve()
-    thermo_path = Path(args.thermo_json).resolve()
-    output_dir = Path(args.output_dir).resolve()
-
-    hull_entries = load_hull_entries(
-        structures_path=structures_path,
-        thermo_path=thermo_path,
-        mpid_key=args.mpid_key,
-        energy_key=args.energy_key,
-        ehull_key=args.ehull_key,
-    )
-
-    build_phase_diagrams_by_space(
-        entries=hull_entries,
-        output_dir=output_dir,
-    )
-
-
-if __name__ == "__main__":
-    main()
+    LOGGER.info(f"\nSaved chemical space to MPIDs mapping to: {mapping_path}")

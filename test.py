@@ -2,6 +2,9 @@ from qmof_thermo.core import calc, relax
 from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 from ase.io import read
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 atoms = read('data/inputs/qmof-bda2f7d.cif')
 struct, energy = relax.run_calc(atoms, id="qmof-bda2f7d",)

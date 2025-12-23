@@ -1,5 +1,4 @@
 import json
-import logging
 from logging import getLogger
 from pathlib import Path
 
@@ -10,6 +9,8 @@ from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator, pretrained_mlip
 from fairchem.core.units.mlip_unit import load_predict_unit
 from pymatgen.io.ase import AseAtomsAdaptor
+from pymatgen.core import Structure
+import numpy as np
 
 LOGGER = getLogger(__name__)
 
@@ -22,8 +23,7 @@ def run_calc(
     fmax: float = 0.03,
     max_steps: int = 10000,
     device: str = "cuda",
-    log_level : str = "INFO"
-):
+) -> tuple[Structure, float]:
     """
     Relax an ASE `Atoms` structure (positions + cell) with a FAIRChem MLIP and save outputs to
     `data/relaxations/<id>/` (log, traj, CIF, and a results.json summary).
@@ -38,9 +38,6 @@ def run_calc(
 
     Returns: (final_struct: pymatgen Structure, final_energy: float)
     """
-    
-    logging.basicConfig()  # ensures a handler exists (no-op if already called)
-    LOGGER.setLevel(getattr(logging, log_level.upper()))
 
     model_name = model_path
     predictor = load_predict_unit(model_name, device=device)
@@ -65,7 +62,7 @@ def run_calc(
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
-    final_fmax = ((final_forces**2).sum(axis=1) ** 0.5).max()  # norms of force vectors
+    final_fmax = np.max(np.linalg.norm(final_forces, axis=1))  # norms of force vectors
     nsteps = opt.get_number_of_steps()
     final_volume = atoms.get_volume()
     final_energy = atoms.get_potential_energy()
