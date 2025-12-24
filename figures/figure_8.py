@@ -1,10 +1,7 @@
-import logging
 from pathlib import Path
 
 import pandas as pd
 from gen_fig import create_parity_plot, gen_grid, get_energy_columns
-
-LOGGER = logging.getLogger(__name__)
 
 DATA_PATH = "data/external/{}_12_25_results.csv"
 OUTPUT_DIR = "figures/figure_8/"
