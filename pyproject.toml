@@ -23,10 +23,10 @@ dependencies = [
 dev = ["pytest>=7.4.0", "ruff>=0.0.285"]
 
 [tool.setuptools.package-data]
-template = ["py.typed"]
+qmof_thermo = ["py.typed"]
 
 [tool.pyright]
-include = ["template"]
+include = ["qmof_thermo"]
 exclude = ["**/__pycache__"]
 
 [tool.pytest.ini_options]
@@ -114,7 +114,7 @@ lint.unfixable = [
   "F841", # Removes unused variables
 ]
 lint.pydocstyle.convention = "numpy"
-lint.isort.known-first-party = ["template"]
+lint.isort.known-first-party = ["qmof_thermo"]
 lint.isort.required-imports = ["from __future__ import annotations"]
 lint.isort.split-on-trailing-comma=false
 extend-include = ["*.ipynb"]
