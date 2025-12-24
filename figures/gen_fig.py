@@ -1,4 +1,3 @@
-import logging
 import os
 from pathlib import Path
 
@@ -10,10 +9,9 @@ from scipy.stats import linregress
 from sklearn.metrics import mean_absolute_error
 
 title_fontsize = 9
-LOGGER = logging.getLogger(__name__)
 
 
-def get_energy_columns(calc_type):
+def get_energy_columns(calc_type) -> tuple[str, str]:
     if calc_type == "Hull":
         return "dft_ehull", "energy_above_hull"
     elif calc_type == "Formation":
@@ -22,7 +20,7 @@ def get_energy_columns(calc_type):
         return "dft_norm_energy", "ml_norm_energy"
 
 
-def format_labels(calc_type, model_type, subset): 
+def format_labels(calc_type, model_type, subset) -> tuple[str, str, str, str]: 
     calc_label = "Total" if calc_type == "Total Energy" else calc_type
     model_label = "UMA-ODAC"
     subset_label = "MP Reference" if subset == "MP_ref" else subset
@@ -30,7 +28,7 @@ def format_labels(calc_type, model_type, subset):
     return calc_label, model_label, subset_label, energy_symbol
 
 
-def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label=""):
+def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="") -> None:
     mask = ~(np.isnan(x) | np.isnan(y))
     x, y = x[mask], y[mask]
 
@@ -156,13 +154,13 @@ def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="
     plt.savefig(output_file, dpi=600, bbox_inches="tight")
     plt.show()
 
-    LOGGER.info(f"Total points plotted: {len(x):,}")
-    LOGGER.info(f"R² = {r2:.3f}")
-    LOGGER.info(f"MAE = {mae:.4f} eV/atom")
-    LOGGER.info(f"Linear fit: y = {slope:.3f}x + {intercept:.4f}\n")
+    print(f"Total points plotted: {len(x):,}")
+    print(f"R² = {r2:.3f}")
+    print(f"MAE = {mae:.4f} eV/atom")
+    print(f"Linear fit: y = {slope:.3f}x + {intercept:.4f}\n")
 
 
-def gen_grid(OUTPUT_DIR: str | Path):
+def gen_grid(OUTPUT_DIR: str | Path) -> None:
     imgs = [Image.open(Path(OUTPUT_DIR + p)) for p in sorted(os.listdir(OUTPUT_DIR))]
 
     w, h = imgs[0].size
@@ -175,4 +173,4 @@ def gen_grid(OUTPUT_DIR: str | Path):
         combined.paste(imgs[2], (0, h))
         combined.paste(imgs[3], (w, h))
     combined.save(f"{OUTPUT_DIR}grid.jpg")
-    LOGGER.info(f"Saved grid image to {OUTPUT_DIR}grid.jpg")
+    print(f"Saved grid image to {OUTPUT_DIR}grid.jpg")
