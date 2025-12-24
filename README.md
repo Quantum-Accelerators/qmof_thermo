@@ -1,6 +1,6 @@
 # qmof-thermo
 
-A toolkit for calculating thermodynamic stability (energy above hull) of Metal-Organic Frameworks (MOFs) using machine learning interatomic potentials (MLIPs).
+A toolkit for calculating thermodynamic stability (energy above hull) of Metal-Organic Frameworks (MOFs) using machine learning interatomic potentials (MLIPs). This repository also includes scripts to reproduce figures found in "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (Dallman et al.).
 
 ## Overview
 
@@ -9,12 +9,33 @@ This package provides a streamlined workflow to:
 - Optionally relax structures using MLIP methods (eSEN, UMA)
 - Calculate the energy above hull in a single line
 
-## Installation
+This respository also includes scripts and CSV to reproduce:
+- Figures 8, S15, S16, S17, and S18 in the manuscript.
+
+To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability Installation** directions
+denoted below. In order to utilize the energy-above-hull calculation method, one must follow the **Energy-Above-Hull Calculator Installation** directions and pip install the repository as an editable package.
+
+## Figure Reproducability Installation
+### 1. Clone and Install the Repository
+```bash
+pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
+cd qmof_thermo
+```
+
+### 2. Construct Figures
+Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`. Running any of the scripts will produce a corresponding folder `qmof_thermo/figures/figure_#` containing the appropriate plot.
+```bash
+python figures/figure_<N>.py
+```
+
+## Energy-Above-Hull Calculator Installation
 
 ### 1. Clone and Install the Package
 
 ```bash
 pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
+cd qmof_thermo
+pip install -e.
 ```
 
 ### 2. Download the QMOF Thermodynamics Database
@@ -35,10 +56,10 @@ data/
 
 ### 3. Initialize the Phase Diagram
 
-Run the setup script to construct the phase diagram from the reference data:
+Run the setup script to construct the phase diagram from the reference data. 
 
-```bash
-python src/qmof_thermo/core/setup_pd.py
+```
+python setup.py
 ```
 
 ## MLIP Relaxation Setup (Optional)
@@ -89,7 +110,13 @@ data/
 
 ```python
 from ase.io import read
-from qmof_thermo import relax, calc
+
+import logging
+import qmof_thermo
+from qmof_thermo.core import calc, relax
+
+#Specify level of logging. Choose between INFO, WARNING, DEBUG
+qmof_thermo.set_log_level(logging.INFO)
 
 # Load your structure
 atoms = read('data/inputs/qmof-XXXXX.cif')
@@ -102,12 +129,7 @@ e_above_hull = calc.energy_above_hull_from_structure(struct, energy)
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
-## License
-
-[Add your license here]
-
+<!-- 
 ## Citation
 
-If you use this package, please cite:
-
-[Add citation information here]
+If you use this package, please cite (to be assigned) -->
