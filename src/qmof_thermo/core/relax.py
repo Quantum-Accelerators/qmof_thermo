@@ -23,6 +23,7 @@ def run_calc(
     fmax: float = 0.03,
     max_steps: int = 10000,
     device: str = "cuda",
+    out_dir: Path | str = Path("data/relaxations"),
 ) -> tuple[Structure, float]:
     """
     Relax an ASE `Atoms` structure (positions + cell) with a FAIRChem MLIP and save outputs to
@@ -40,6 +41,7 @@ def run_calc(
     """
 
     model_name = model_path
+    out_dir = Path(out_dir)
     predictor = load_predict_unit(model_name, device=device)
     calc = FAIRChemCalculator(predictor, task_name=task_name)
 
@@ -51,7 +53,7 @@ def run_calc(
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = Path("data/relaxations") / id
+    out_dir = out_dir / id
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
