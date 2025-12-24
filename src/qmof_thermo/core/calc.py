@@ -4,16 +4,11 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
 from pymatgen.core import Structure
-
-try:
-    from pymatgen.io.ase import AseAtomsAdaptor
-except ImportError:
-    AseAtomsAdaptor = None  # will error nicely if user uses the Atoms path
 
 
 def _chemical_space_from_structure(struct: Structure) -> Tuple[str, ...]:
@@ -64,6 +59,7 @@ def _load_phase_diagram_for_space(
     pd_obj: PhaseDiagram = loadfn(pd_path)
     return pd_obj
 
+
 def energy_above_hull_from_structure(
     struct: Structure,
     energy: float,
@@ -76,7 +72,6 @@ def energy_above_hull_from_structure(
     energy -> total relaxed energy of such structure
     references_dir -> filled by setup_pd.py
     """
-    
 
     space = _chemical_space_from_structure(struct)
     pd_obj = _load_phase_diagram_for_space(space, references_dir)
