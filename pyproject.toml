@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "BSD-3" }
 authors = [
-  { name = "Aryan Saha" }
+  { name = "Rosen Group" }
 ]
 
 dependencies = [
