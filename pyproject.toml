@@ -15,6 +15,7 @@ authors = [
 
 dependencies = [
   "ase>=3.26.0",
+  "fairchem-core>=2.2.0",
   "pymatgen>=2024.0.0",
   "pandas>=1.5",
 ]
