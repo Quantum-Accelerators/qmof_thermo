@@ -53,7 +53,8 @@ Set `structures_path` to the path of the `reference_thermo_structures.json file`
 `thermo_path` to the path of the `reference_thermo.json file`. Set `pd_dir` to an accessible empty directory. `pd_dir` will be accessed everytime `calc.energy_above_hull_from_structure()` is called. 
 
 Here is a sample script one can use to initialize the phase_diagrams. This script will fill `pd_dir` with PhaseDiagram JSON files by chemical space, along with a chemical space to ID mapping JSON file. 
-```
+
+```python
 import logging
 
 
