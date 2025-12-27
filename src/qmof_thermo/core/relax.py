@@ -18,8 +18,8 @@ LOGGER = getLogger(__name__)
 def run_calc(
     atoms: Atoms,
     id: str,
-    model_path: str = "models/esen_sm_odac25_full_stress.pt",
-    task_name: str = None,
+    model: str | Path = "uma-s-1p1",
+    uma_task_name: str | None = "odac",
     fmax: float = 0.03,
     max_steps: int = 10000,
     device: str = "cuda",
@@ -39,17 +39,8 @@ def run_calc(
 
     Returns: (final_struct: pymatgen Structure, final_energy: float)
     """
-
-    model_name = model_path
-    out_dir = Path(out_dir)
-    predictor = load_predict_unit(model_name, device=device)
-    calc = FAIRChemCalculator(predictor, task_name=task_name)
-
-    model_name = "uma-s-1p1"
-    predictor = pretrained_mlip.get_predict_unit(model_name)
-    calc = FAIRChemCalculator(predictor, task_name="odac")
-
-    atoms.calc = calc  # this attaches the calculator to your Atoms object
+    
+    atoms.calc = FAIRChemCalculator.from_model_checkpoint(name_or_path=model, task_name=uma_task_name)
 
     filter_atoms = FrechetCellFilter(atoms)
 
@@ -64,7 +55,7 @@ def run_calc(
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
-    final_fmax = np.max(np.linalg.norm(final_forces, axis=1))  # norms of force vectors
+    final_fmax = np.max(np.linalg.norm(final_forces, axis=1)) 
     nsteps = opt.get_number_of_steps()
     final_volume = atoms.get_volume()
     final_energy = atoms.get_potential_energy()
@@ -84,7 +75,7 @@ def run_calc(
 
     summary = {
         "id": id,
-        "model_ckpt": model_path,
+        "model": model,
         "fmax_target": fmax,
         "max_steps": max_steps,
         "nsteps": int(nsteps),
