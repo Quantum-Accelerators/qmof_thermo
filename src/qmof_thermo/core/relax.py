@@ -19,7 +19,7 @@ def run_calc(
     atoms: Atoms,
     id: str,
     model: str | Path = "uma-s-1p1",
-    task_name: str = None,
+    uma_task_name: str | None = "odac",
     fmax: float = 0.03,
     max_steps: int = 10000,
     device: str = "cuda",
@@ -39,8 +39,8 @@ def run_calc(
 
     Returns: (final_struct: pymatgen Structure, final_energy: float)
     """
-
-    atoms.calc = FAIRChemCalculator.from_model_checkpoint(name_or_path=model, task_name="odac" if "uma" in model else None)
+    
+    atoms.calc = FAIRChemCalculator.from_model_checkpoint(name_or_path=model, task_name=uma_task_name)
 
     filter_atoms = FrechetCellFilter(atoms)
 
