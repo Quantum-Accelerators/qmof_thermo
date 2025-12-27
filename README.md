@@ -120,7 +120,7 @@ qmof_thermo.set_log_level(logging.INFO)
 # Load your structure
 atoms = read('data/inputs/qmof-XXXXX.cif')
 
-# Relax the structure (optional) and get energy
+# Relax the structure and get energy
 struct, energy = relax.run_calc(atoms, id="qmof-XXXXX")
 
 # Path to directory containing PhaseDiagram JSON files
