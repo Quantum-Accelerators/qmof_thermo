@@ -55,7 +55,7 @@ def run_calc(
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
-    final_fmax = np.max(np.linalg.norm(final_forces, axis=1))  # norms of force vectors
+    final_fmax = np.max(np.linalg.norm(final_forces, axis=1)) 
     nsteps = opt.get_number_of_steps()
     final_volume = atoms.get_volume()
     final_energy = atoms.get_potential_energy()
