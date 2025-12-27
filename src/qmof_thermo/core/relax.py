@@ -75,7 +75,7 @@ def run_calc(
 
     summary = {
         "id": id,
-        "model_ckpt": model_path,
+        "model": model,
         "fmax_target": fmax,
         "max_steps": max_steps,
         "nsteps": int(nsteps),
