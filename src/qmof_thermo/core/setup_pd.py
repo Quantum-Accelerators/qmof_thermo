@@ -212,3 +212,46 @@ def build_phase_diagrams_by_space(
     with mapping_path.open("w") as f:
         json.dump(chemical_space_to_mpids, f, indent=2)
     LOGGER.info(f"\nSaved chemical space to MPIDs mapping to: {mapping_path}")
+
+def setup_phase_diagrams(structures_path: str | Path, thermo_path : str | Path, output_dir : str | Path,
+                            id_key : str = "mpid", energy_key : str = "energy_total", 
+                            ehull_key : str = "energy_above_hull") -> None:
+    """
+    Load reference hull data and construct phase diagrams for all chemical spaces.
+
+    Main method to construct hull phase diagrams. Constructs seperate PhaseDiagram for each unique
+    chemical space present in data using only stable compounds (energy_above_hull = 0).
+
+    Parameters
+    ----------
+    structures_path : str | Path
+        Path to a JSON file containing structure records. Each record should
+        have an ID field and a "structure" field (pymatgen Structure dict).
+    thermo_path : str | Path
+        Path to a JSON file containing thermo data.
+        Must include columns for ID, total energy, and energy above hull.
+    output_dir : str | Path
+        Directory where phase diagram JSON files and the chemical-space-to-ID JSON
+        will be saved. Created if it does not exist.
+    id_key : str, default "mpid"
+        Column/key name for the material ID in both data sources.
+    energy_key : str, default "energy_total"
+        Column name for total energy (eV) in the thermo data.
+    ehull_key : str, default "energy_above_hull"
+        Column name for energy above hull (eV) in the thermo data.
+
+    Returns
+    -------
+    None
+        Outputs are written to `output_dir`:
+        - One `{chemical_space}_phase_diagram.json` per valid chemical space
+        - `chemical_space_to_mpids.json` mapping spaces to constituent material IDs
+    """
+    structures_path = Path(structures_path)
+    thermo_path = Path(thermo_path)
+    output_dir = Path(output_dir)
+
+    hull_entries = load_hull_entries(structures_path, thermo_path, id_key, energy_key, ehull_key)
+    build_phase_diagrams_by_space(hull_entries, output_dir)
+
+    

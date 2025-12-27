@@ -9,16 +9,18 @@ from typing import Any, Dict, Tuple
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
 from pymatgen.core import Structure
+from ase import Atoms
+from pymatgen.io.ase import AseAtomsAdaptor
 
 
-def _chemical_space_from_structure(struct: Structure) -> Tuple[str, ...]:
+def chemical_space_from_structure(struct: Structure) -> Tuple[str, ...]:
     """Sorted tuple of elements,"""
     return tuple(sorted(el.symbol for el in struct.composition.elements))
 
 
 def _load_phase_diagram_for_space(
     space: Tuple[str, ...],
-    references_dir: Path | str = "data/references",
+    pd_dir: Path | str,
     mapping_filename: str = "chemical_space_to_mpids.json",
 ) -> PhaseDiagram:
     """
@@ -28,8 +30,8 @@ def _load_phase_diagram_for_space(
       - data/references/chemical_space_to_mpids.json
       - data/references/"('Ba', 'O', 'V')_phase_diagram.json"
     """
-    references_dir = Path(references_dir)
-    mapping_path = references_dir / mapping_filename
+    pd_dir = Path(pd_dir)
+    mapping_path = pd_dir / mapping_filename
 
     if not mapping_path.is_file():
         raise FileNotFoundError(
@@ -48,7 +50,7 @@ def _load_phase_diagram_for_space(
         )
 
     pd_filename = f"{key}_phase_diagram.json"
-    pd_path = references_dir / pd_filename
+    pd_path = pd_dir / pd_filename
 
     if not pd_path.is_file():
         raise FileNotFoundError(
@@ -61,7 +63,7 @@ def _load_phase_diagram_for_space(
 
 
 def energy_above_hull_from_structure(
-    struct: Structure,
+    struct: Structure | Atoms,
     energy: float,
     references_dir: Path | str = "data/references",
 ) -> float:
@@ -72,8 +74,10 @@ def energy_above_hull_from_structure(
     energy -> total relaxed energy of such structure
     references_dir -> filled by setup_pd.py
     """
+    if isinstance(struct, Atoms):
+        struct = AseAtomsAdaptor.get_structure(struct)
 
-    space = _chemical_space_from_structure(struct)
+    space = chemical_space_from_structure(struct)
     pd_obj = _load_phase_diagram_for_space(space, references_dir)
 
     entry = PDEntry(struct.composition, energy)
