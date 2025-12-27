@@ -18,7 +18,7 @@ LOGGER = getLogger(__name__)
 def run_calc(
     atoms: Atoms,
     id: str,
-    model_path: str = "models/esen_sm_odac25_full_stress.pt",
+    model: str | Path = "uma-s-1p1",
     task_name: str = None,
     fmax: float = 0.03,
     max_steps: int = 10000,
@@ -40,16 +40,7 @@ def run_calc(
     Returns: (final_struct: pymatgen Structure, final_energy: float)
     """
 
-    model_name = model_path
-    out_dir = Path(out_dir)
-    predictor = load_predict_unit(model_name, device=device)
-    calc = FAIRChemCalculator(predictor, task_name=task_name)
-
-    model_name = "uma-s-1p1"
-    predictor = pretrained_mlip.get_predict_unit(model_name)
-    calc = FAIRChemCalculator(predictor, task_name="odac")
-
-    atoms.calc = calc  # this attaches the calculator to your Atoms object
+    atoms.calc = FAIRChemCalculator.from_model_checkpoint(name_or_path=model, task_name="odac" if "uma" in model else None)
 
     filter_atoms = FrechetCellFilter(atoms)
 
