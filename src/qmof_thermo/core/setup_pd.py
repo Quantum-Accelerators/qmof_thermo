@@ -2,21 +2,33 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from logging import getLogger
 from pathlib import Path
-from typing import Dict, List
 
 import pandas as pd
-from pymatgen.core import Structure
-from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 from monty.serialization import dumpfn
-from logging import getLogger
+from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
+from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
 
 
 @dataclass
 class HullEntry:
-    """Container for a single reference hull entry."""
+    """
+    Container for a single reference hull entry.
+
+    Attributes
+    ----------
+    mpid
+        Materials Project ID for this entry.
+    structure
+        Pymatgen Structure object for this material.
+    energy
+        Total energy in eV.
+    elements
+        Frozenset of element symbols present in the structure.
+    """
 
     mpid: str
     structure: Structure
@@ -25,11 +37,23 @@ class HullEntry:
 
 
 def chemical_space_from_structure(struct: Structure) -> set[str]:
-    """Return a set of element symbols in the structure."""
+    """
+    Extract the chemical space from a structure as a frozenset of element symbols.
+
+    Parameters
+    ----------
+    struct
+        Pymatgen Structure object.
+
+    Returns
+    -------
+    frozenset[str]
+        Frozenset of element symbols present in the structure's composition.
+    """
     return frozenset(str(el.symbol) for el in struct.composition.elements)
 
 
-def load_hull_entries(
+def _load_hull_entries(
     structures_path: Path,
     thermo_path: Path,
     mpid_key: str = "mpid",
@@ -38,6 +62,38 @@ def load_hull_entries(
 ) -> list[HullEntry]:
     """
     Load all hull entries (energy_above_hull == 0) with structures and energies.
+
+    Reads structure and thermodynamic data from separate JSON files, filters
+    for materials on the convex hull, and returns a list of HullEntry objects
+    containing matched data.
+
+    Parameters
+    ----------
+    structures_path
+        Path to a JSON file containing structure records. Each record should
+        have an ID field (matching ``mpid_key``) and a ``"structure"`` field
+        containing a Structure object.
+    thermo_path
+        Path to a JSON file containing thermodynamic data.
+        Must include columns of ID, total energy, and energy above hull.
+    mpid_key
+        Column/key for the material ID in both data sources.
+    energy_key
+        Column name for total energy (eV) in thermo data.
+    ehull_key
+        Column name for energy above hull (eV) in thermo data.
+
+    Returns
+    -------
+    list[HullEntry]
+        List of HullEntry objects for all valid materials
+        with ``energy_above_hull = 0``.
+
+    Raises
+    ------
+    KeyError
+        If required columns (``mpid_key``, ``energy_key``, or ``ehull_key``)
+        not found in the thermo JSON.
     """
 
     LOGGER.info(f"Loading structures from: {structures_path}")
@@ -62,12 +118,12 @@ def load_hull_entries(
     LOGGER.info(f"Using {len(hull_mpids)} MPIDs as reference hull entries.")
 
     # Lookup from mpid -> energy_total
-    hull_energy_lookup: Dict[str, float] = dict(
+    hull_energy_lookup: dict[str, float] = dict(
         zip(hull_df[mpid_key], hull_df[energy_key])
     )
 
     # Build mpid -> structure mapping
-    struct_lookup: Dict[str, Structure] = {}
+    struct_lookup: dict[str, Structure] = {}
     missing_struct_count = 0
 
     for rec in struct_records:
@@ -106,7 +162,7 @@ def load_hull_entries(
     )
 
     # Assemble final HullEntry list
-    all_entries: List[HullEntry] = []
+    all_entries: list[HullEntry] = []
     used_count = 0
     for mpid in hull_mpids:
         if mpid not in struct_lookup:
@@ -124,14 +180,36 @@ def load_hull_entries(
     return all_entries
 
 
-def build_phase_diagrams_by_space(
-    entries: List[HullEntry], output_dir: Path
-) -> None:
+def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -> None:
     """
-    For each unique chemical space S (set of elements), build a PhaseDiagram
-    using *all* hull entries whose element set is a subset of S.
+    Build and save PhaseDiagrams for each unique chemical space.
 
-    Also writes a chemical_space_to_mpids.json mapping.
+    For each unique chemical space (set of elements), construct a PhaseDiagram
+    using all hull entries whose element set is a subset of chemical space. Only
+    multi-element spaces are processed.
+
+    Parameters
+    ----------
+    entries
+        List of HullEntry objects containing structure, energy, and element data.
+    output_dir
+        Directory where phase diagram JSON files will be saved. Created if it
+        does not exist.
+
+    Returns
+    -------
+    None
+        Outputs are written to ``output_dir``:
+        - One ``{chemical_space}_phase_diagram.json`` per valid chemical space
+        - ``chemical_space_to_mpids.json`` mapping spaces to constituent material IDs
+
+    Notes
+    -----
+    A chemical space is skipped if:
+        - It contains only a single element
+        - It has fewer entries than the number of elements in the space
+        - It is missing pure elemental reference entries for any element
+        - PhaseDiagram construction fails
     """
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -145,7 +223,7 @@ def build_phase_diagrams_by_space(
     LOGGER.info(f"Total unique chemical spaces (multi-element): {len(spaces)}")
 
     # 3. Build PhaseDiagram per chemical space
-    chemical_space_to_mpids: Dict[str, List[str]] = {}
+    chemical_space_to_mpids: dict[str, list[str]] = {}
 
     all_entries = entries
 
@@ -213,9 +291,15 @@ def build_phase_diagrams_by_space(
         json.dump(chemical_space_to_mpids, f, indent=2)
     LOGGER.info(f"\nSaved chemical space to MPIDs mapping to: {mapping_path}")
 
-def setup_phase_diagrams(structures_path: str | Path, thermo_path : str | Path, output_dir : str | Path,
-                            id_key : str = "mpid", energy_key : str = "energy_total", 
-                            ehull_key : str = "energy_above_hull") -> None:
+
+def setup_phase_diagrams(
+    structures_path: str | Path,
+    thermo_path: str | Path,
+    output_dir: str | Path,
+    id_key: str = "mpid",
+    energy_key: str = "energy_total",
+    ehull_key: str = "energy_above_hull",
+) -> None:
     """
     Load reference hull data and construct phase diagrams for all chemical spaces.
 
@@ -226,7 +310,7 @@ def setup_phase_diagrams(structures_path: str | Path, thermo_path : str | Path, 
     ----------
     structures_path : str | Path
         Path to a JSON file containing structure records. Each record should
-        have an ID field and a "structure" field (pymatgen Structure dict).
+        have an ID field and a "structure" field (pymatgen Structure).
     thermo_path : str | Path
         Path to a JSON file containing thermo data.
         Must include columns for ID, total energy, and energy above hull.
@@ -251,7 +335,7 @@ def setup_phase_diagrams(structures_path: str | Path, thermo_path : str | Path, 
     thermo_path = Path(thermo_path)
     output_dir = Path(output_dir)
 
-    hull_entries = load_hull_entries(structures_path, thermo_path, id_key, energy_key, ehull_key)
-    build_phase_diagrams_by_space(hull_entries, output_dir)
-
-    
+    hull_entries = _load_hull_entries(
+        structures_path, thermo_path, id_key, energy_key, ehull_key
+    )
+    _build_phase_diagrams_by_space(hull_entries, output_dir)

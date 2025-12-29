@@ -4,32 +4,66 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any
 
+from ase import Atoms
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
 from pymatgen.core import Structure
-from ase import Atoms
 from pymatgen.io.ase import AseAtomsAdaptor
 
 
-def chemical_space_from_structure(struct: Structure) -> Tuple[str, ...]:
-    """Sorted tuple of elements,"""
+def _chemical_space_from_structure(struct: Structure) -> tuple[str, ...]:
+    """
+    Extract the chemical space from a structure as a sorted tuple of element symbols.
+
+    Parameters
+    ----------
+    struct
+        Pymatgen Structure object from which to extract the chemical space.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Sorted tuple of element symbols present in the structure's composition.
+    """
     return tuple(sorted(el.symbol for el in struct.composition.elements))
 
 
 def _load_phase_diagram_for_space(
-    space: Tuple[str, ...],
+    space: tuple[str, ...],
     pd_dir: Path | str,
     mapping_filename: str = "chemical_space_to_mpids.json",
 ) -> PhaseDiagram:
     """
-    Load precomputed PhaseDiagram for exact chemical space.
+    Load a precomputed PhaseDiagram for an exact chemical space.
 
-    `setup_pd.py` creates:
-      - data/references/chemical_space_to_mpids.json
-      - data/references/"('Ba', 'O', 'V')_phase_diagram.json"
+    Parameters
+    ----------
+    space
+        Sorted tuple of element symbols defining the chemical space,
+        e.g., ``('Ba', 'O', 'V')``.
+    pd_dir
+        Directory containing the precomputed phase diagram JSON files
+        and the mapping file.
+    mapping_filename
+        Name of the JSON file mapping chemical spaces to material IDs.
+        Default is ``"chemical_space_to_mpids.json"``.
+
+    Returns
+    -------
+    PhaseDiagram
+        Pymatgen PhaseDiagram object for the specified chemical space.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the mapping file or the phase diagram JSON file for the specified
+        space cannot be found.
+    ValueError
+        If the specified chemical space is not present in the mapping file.
     """
+
     pd_dir = Path(pd_dir)
     mapping_path = pd_dir / mapping_filename
 
@@ -40,7 +74,7 @@ def _load_phase_diagram_for_space(
         )
 
     with mapping_path.open() as f:
-        space_mapping: Dict[str, Any] = json.load(f)
+        space_mapping: dict[str, Any] = json.load(f)
 
     key = str(space)  # e.g. "('Ba', 'O', 'V')"
     if key not in space_mapping:
@@ -68,16 +102,28 @@ def energy_above_hull_from_structure(
     references_dir: Path | str = "data/references",
 ) -> float:
     """
-    Energy above hull (eV/atom) for a pymatgen Structure with a given total energy.
+    Calculate the energy above hull for a structure with a given total energy.
 
-    struct -> input structure
-    energy -> total relaxed energy of such structure
-    references_dir -> filled by setup_pd.py
+    Parameters
+    ----------
+    struct
+        Input structure as either a pymatgen Structure or ASE Atoms object.
+        If an Atoms object is provided, it will be converted to a Structure.
+    energy
+        Total relaxed energy of the structure in eV.
+    references_dir
+        Path to the directory containing precomputed phase diagram
+        references. Default is ``"data/references"``.
+
+    Returns
+    -------
+    float
+        Energy above the convex hull in eV/atom.
     """
     if isinstance(struct, Atoms):
         struct = AseAtomsAdaptor.get_structure(struct)
 
-    space = chemical_space_from_structure(struct)
+    space = _chemical_space_from_structure(struct)
     pd_obj = _load_phase_diagram_for_space(space, references_dir)
 
     entry = PDEntry(struct.composition, energy)
