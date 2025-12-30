@@ -1,16 +1,17 @@
+from __future__ import annotations
+
 import json
 from logging import getLogger
 from pathlib import Path
 
+import numpy as np
 from ase import Atoms
 from ase.filters import FrechetCellFilter
 from ase.io import read, write
 from ase.optimize import BFGS
-from fairchem.core import FAIRChemCalculator, pretrained_mlip
-from fairchem.core.units.mlip_unit import load_predict_unit
-from pymatgen.io.ase import AseAtomsAdaptor
+from fairchem.core import FAIRChemCalculator
 from pymatgen.core import Structure
-import numpy as np
+from pymatgen.io.ase import AseAtomsAdaptor
 
 LOGGER = getLogger(__name__)
 
@@ -26,36 +27,70 @@ def run_calc(
     out_dir: Path | str = Path("data/relaxations"),
 ) -> tuple[Structure, float]:
     """
-    Relax an ASE `Atoms` structure (positions + cell) with a FAIRChem MLIP and save outputs to
-    `data/relaxations/<id>/` (log, traj, CIF, and a results.json summary).
+    Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
 
-    Model usage:
-    - eSEN: pass the local checkpoint file path via `model_path`.
-        - task_name
-    - UMA: either pass a local checkpoint file, or load from Hugging Face by passing the UMA
-    model name (e.g. "uma-s-1p1") to `pretrained_mlip.get_predict_unit(...)`.
+    Performs a full relaxation of both atomic positions and cell parameters
+    using the BFGS optimizer with a FrechetCellFilter. Outputs are saved to
+    ``<out_dir>/<id>/`` including optimization log, trajectory, relaxed CIF file,
+    and a JSON summary of results.
 
-    log_level - specify level of logging, either INFO or DEBUG
+    Parameters
+    ----------
+    atoms
+        ASE Atoms object to be relaxed.
+    id
+        Unique identifier for the relaxation job. Used to name output files.
+    model
+        Model name or path to checkpoint file. For UMA models, pass the model
+        name (e.g., ``"uma-s-1p1"``) to load from Hugging Face, or provide a
+        local checkpoint path. For eSEN models, pass the local checkpoint
+        file path.
+    uma_task_name
+        Task name for UMA models. Set to "odac" for UMA models, or
+        ``None`` for non-UMA models like eSEN.
+    fmax
+        Convergence criteria, set maximum force on atoms in in eV/Å. Optimization
+        stops when maximum force on any atom falls below this value.
+    max_steps
+        Maximum number of optimization steps allowed.
+    device
+        Device to run calculation on, e.g., "cpu" or "cuda".
+    out_dir
+        Base directory for output files. Subdirectory ``<id>``
+        created and stores all relaxation specific outputs.
 
-    Returns: (final_struct: pymatgen Structure, final_energy: float)
+    Returns
+    -------
+    tuple[Structure, float]
+        - The final relaxed structure as a pymatgen Structure object.
+        - The final relaxed total energy in eV.
+
+    Notes
+    -----
+    Following files are written to ``<out_dir>/<id>/``:
+        - ``opt.log``: Optimization log
+        - ``opt.traj``: Trajectory file with all optimization steps
+        - ``<id>.cif``: Final relaxed structure in CIF format
+        - ``results.json``: Summary including energy, volume, forces, and steps
     """
-    
-    atoms.calc = FAIRChemCalculator.from_model_checkpoint(name_or_path=model, task_name=uma_task_name)
+    atoms.calc = FAIRChemCalculator.from_model_checkpoint(
+        name_or_path=model,
+        task_name=uma_task_name if "uma" in model else None,
+        device=device,
+    )
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = out_dir / id
+    out_dir = Path(out_dir) / id
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
-    opt = BFGS(
-        filter_atoms, trajectory=traj_path, logfile=log_path
-    )  # selects the optimizer to use for the geometry optimization
+    opt = BFGS(filter_atoms, trajectory=traj_path, logfile=log_path)
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
-    final_fmax = np.max(np.linalg.norm(final_forces, axis=1)) 
+    final_fmax = float(np.max(np.linalg.norm(final_forces, axis=1)))
     nsteps = opt.get_number_of_steps()
     final_volume = atoms.get_volume()
     final_energy = atoms.get_potential_energy()
@@ -63,25 +98,21 @@ def run_calc(
         f"Energy: {final_energy}, Volume: {final_volume}, fmax: {final_fmax}, steps: {nsteps}"
     )
 
-    try:
-        final_atoms = read(traj_path, index=-1)  # last frame
-        final_struct = AseAtomsAdaptor.get_structure(final_atoms)
-        cif_path = out_dir / f"{id}.cif"
-        write(cif_path, final_atoms)
-        # optional: print path so you know where it went
-        LOGGER.info(f"Final relaxed structure written to: {cif_path}")
-    except Exception as e:
-        LOGGER.debug(f"Warning: failed to write CIF from trajectory: {e}")
+    final_atoms = read(traj_path, index=-1)  # last frame
+    final_struct = AseAtomsAdaptor.get_structure(final_atoms)
+    cif_path = out_dir / f"{id}.cif"
+    write(cif_path, final_atoms)
+    LOGGER.info(f"Final relaxed structure written to: {cif_path}")
 
     summary = {
         "id": id,
         "model": model,
         "fmax_target": fmax,
         "max_steps": max_steps,
-        "nsteps": int(nsteps),
-        "final_energy": float(final_energy),
-        "final_volume": float(final_volume),
-        "final_fmax": float(final_fmax),
+        "nsteps": nsteps,
+        "final_energy": final_energy,
+        "final_volume": final_volume,
+        "final_fmax": final_fmax,
     }
     summary_path = out_dir / "results.json"
     with summary_path.open("w") as f:
