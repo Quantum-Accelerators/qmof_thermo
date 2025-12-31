@@ -119,7 +119,7 @@ def _load_hull_entries(
 
     # Lookup from mpid -> energy_total
     hull_energy_lookup: dict[str, float] = dict(
-        zip(hull_df[mpid_key], hull_df[energy_key])
+        zip(hull_df[mpid_key], hull_df[energy_key], strict=True)
     )
 
     # Build mpid -> structure mapping

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
@@ -20,7 +22,7 @@ def get_energy_columns(calc_type) -> tuple[str, str]:
         return "dft_norm_energy", "ml_norm_energy"
 
 
-def format_labels(calc_type, model_type, subset) -> tuple[str, str, str, str]: 
+def format_labels(calc_type, model_type, subset) -> tuple[str, str, str, str]:
     calc_label = "Total" if calc_type == "Total Energy" else calc_type
     model_label = "UMA-ODAC"
     subset_label = "MP Reference" if subset == "MP_ref" else subset
