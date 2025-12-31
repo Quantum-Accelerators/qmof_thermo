@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +23,6 @@ for graph_set in graphs:
     df = pd.read_csv(DATA_PATH.format(model_type))
     df = df[df["type"] == subset]
     x_col, y_col = get_energy_columns(calc_type)
-    x, y = df[x_col].values, df[y_col].values
+    x, y = df[x_col].to_numpy(), df[y_col].to_numpy()
     create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label)
 gen_grid(OUTPUT_DIR)
