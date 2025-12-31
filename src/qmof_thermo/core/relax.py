@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from logging import getLogger
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
-from ase import Atoms
 from ase.filters import FrechetCellFilter
 from ase.io import read, write
 from ase.optimize import BFGS
@@ -13,12 +13,16 @@ from fairchem.core import FAIRChemCalculator
 from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 
+if TYPE_CHECKING:
+    from ase import Atoms
+    from pymatgen.core import Structure
+
 LOGGER = getLogger(__name__)
 
 
 def run_calc(
     atoms: Atoms,
-    mp_id: str,
+    mpid: str,
     model: str | Path = "uma-s-1p1",
     uma_task_name: str | None = "odac",
     fmax: float = 0.03,
@@ -31,14 +35,14 @@ def run_calc(
 
     Performs a full relaxation of both atomic positions and cell parameters
     using the BFGS optimizer with a FrechetCellFilter. Outputs are saved to
-    ``<out_dir>/<mp_id>/`` including optimization log, trajectory, relaxed CIF file,
+    ``<out_dir>/<mpid>/`` including optimization log, trajectory, relaxed CIF file,
     and a JSON summary of results.
 
     Parameters
     ----------
     atoms
         ASE Atoms object to be relaxed.
-    mp_id
+    mpid
         Unique identifier for the relaxation job. Used to name output files.
     model
         Model name or path to checkpoint file. For UMA models, pass the model
@@ -56,7 +60,7 @@ def run_calc(
     device
         Device to run calculation on, e.g., "cpu" or "cuda".
     out_dir
-        Base directory for output files. Subdirectory ``<mp_id>``
+        Base directory for output files. Subdirectory ``<mpid>``
         created and stores all relaxation specific outputs.
 
     Returns
@@ -67,10 +71,10 @@ def run_calc(
 
     Notes
     -----
-    Following files are written to ``<out_dir>/<mp_id>/``:
+    Following files are written to ``<out_dir>/<mpid>/``:
         - ``opt.log``: Optimization log
         - ``opt.traj``: Trajectory file with all optimization steps
-        - ``<mp_id>.cif``: Final relaxed structure in CIF format
+        - ``<mpid>.cif``: Final relaxed structure in CIF format
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
@@ -81,7 +85,7 @@ def run_calc(
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = Path(out_dir) / mp_id
+    out_dir = Path(out_dir) / mpid
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
@@ -100,12 +104,12 @@ def run_calc(
 
     final_atoms = read(traj_path, index=-1)  # last frame
     final_struct = AseAtomsAdaptor.get_structure(final_atoms)
-    cif_path = out_dir / f"{mp_id}.cif"
+    cif_path = out_dir / f"{mpid}.cif"
     write(cif_path, final_atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
 
     summary = {
-        "id": mp_id,
+        "id": mpid,
         "model": model,
         "fmax_target": fmax,
         "max_steps": max_steps,

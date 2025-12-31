@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ase import Atoms
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
-from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
+
+if TYPE_CHECKING:
+    from pymatgen.core import Structure
 
 
 def _chemical_space_from_structure(struct: Structure) -> tuple[str, ...]:

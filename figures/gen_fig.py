@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+import pathlib
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -22,19 +22,21 @@ def get_energy_columns(calc_type) -> tuple[str, str]:
         return "dft_norm_energy", "ml_norm_energy"
 
 
-def format_labels(calc_type, model_type, subset) -> tuple[str, str, str, str]:
+def format_labels(calc_type, subset, model_type : str = "UMA-ODAC",) -> tuple[str, str, str, str]:
     calc_label = "Total" if calc_type == "Total Energy" else calc_type
-    model_label = "UMA-ODAC"
+    model_label = model_type
     subset_label = "MP Reference" if subset == "MP_ref" else subset
     energy_symbol = "E" if calc_type == "Total Energy" else r"\Delta E"
     return calc_label, model_label, subset_label, energy_symbol
 
 
-def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="") -> None:
+def create_parity_plot(
+    x, y, calc_type, model_type, subset, OUTPUT_PATH, label=""
+) -> None:
     mask = ~(np.isnan(x) | np.isnan(y))
     x, y = x[mask], y[mask]
 
-    slope, intercept, r_value, p_value, std_err = linregress(x, y)
+    slope, intercept, r_value, _pvalue, _stderr = linregress(x, y)
     r2 = r_value**2
     slope * x + intercept
     mae = mean_absolute_error(x, y)
@@ -77,10 +79,8 @@ def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="
     cbar = plt.colorbar(hexbin, ax=ax, pad=0.02)
     cbar.ax.tick_params(labelsize=8)
 
-    location = "upper left"
     if calc_type == "Hull" and subset == "MP_ref":
         ax.plot([], [], " ", label=f"MAE = {mae:.3f} eV/atom")
-        location = "upper right"
     else:
         ax.plot([-200, 200], [-200, 200], "b--", lw=2, alpha=0.8, zorder=10)
         x_fit = np.array([x_min, x_max])
@@ -88,7 +88,7 @@ def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="
         ax.plot([], [], " ", label=f"MAE = {mae:.3f} eV/atom")
 
     calc_label, model_label, subset_label, energy_symbol = format_labels(
-        calc_type, model_type, subset
+        calc_type, subset, model_type
     )
 
     ax.set_xlabel(
@@ -163,7 +163,10 @@ def create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label="
 
 
 def gen_grid(OUTPUT_DIR: str | Path) -> None:
-    imgs = [Image.open(Path(OUTPUT_DIR + p)) for p in sorted(os.listdir(OUTPUT_DIR))]
+    imgs = [
+        Image.open(Path(OUTPUT_DIR + p))
+        for p in sorted(pathlib.Path.iterdir(OUTPUT_DIR))
+    ]
 
     w, h = imgs[0].size
 

@@ -63,7 +63,7 @@ def test_make_phase_diagram(pd_dir):
 
 def test_relax(unrelaxed_atoms, out_dir):
     struct, energy = relax.run_calc(
-        unrelaxed_atoms, id="qmof-bda2f7d", out_dir=out_dir, device="cpu"
+        unrelaxed_atoms, mpid="qmof-bda2f7d", out_dir=out_dir, device="cpu"
     )
     assert struct.volume == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
