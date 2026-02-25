@@ -108,6 +108,7 @@ lint.ignore = [
   "PERF203",  # try-except-in-loop
   "RET505", # Unnecessary `elif` after `return`
   "PLC0415", # `import` should be at the top-level of a file
+  "T201", # print
 ]
 src = ["src"]
 lint.unfixable = [
