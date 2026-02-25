@@ -4,17 +4,9 @@ A toolkit for calculating thermodynamic stability (energy above hull) of Metal-O
 
 ## Overview
 
-This package provides a streamlined workflow to:
-- Load MOF structures (as ASE `Atoms` objects)
-- Optionally relax structures using MLIP methods (eSEN, UMA)
-- Calculate the energy above hull in a single line
+This package provides a streamlined workflow to calculate the formation energy and energy above hull for MOFs. In order to utilize the energy-above-hull calculation method, one must follow the **Setup Instructions** directions.
 
-This respository also includes scripts and CSV to reproduce:
-- Figures 8, S15, S16, S17, and S18 in the manuscript.
-
-To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability Installation** directions
-denoted below. In order to utilize the energy-above-hull calculation method, one must follow the **Energy-Above-Hull Calculator Installation** directions and pip install the repository.
-
+This respository also includes scripts to reproduce key figures in the manuscript. To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability** directions denoted below. 
 
 ## Usage
 
