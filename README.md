@@ -15,19 +15,6 @@ This respository also includes scripts and CSV to reproduce:
 To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability Installation** directions
 denoted below. In order to utilize the energy-above-hull calculation method, one must follow the **Energy-Above-Hull Calculator Installation** directions and pip install the repository.
 
-## Figure Reproducibility Installation
-### 1. Clone and Install the Repository
-```bash
-git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
-cd qmof_thermo
-```
-
-### 2. Construct Figures
-Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`. Running any of the scripts will produce a corresponding folder `qmof_thermo/figures/figure_#` containing the appropriate plot.
-```bash
-python figures/figure_<N>.py
-```
-
 ## Energy-Above-Hull Calculator Installation
 Upon installation of the qmof_thermo library, users must setup phase diagram constructions.
 To obtain energy_above_hull calculations using DFT values from the qmof_thermo database, users must utilize JSON files found in the qmof-thermo [Figshare](https://doi.org/10.6084/m9.figshare.13147324). All necessary steps are outlined below.
@@ -130,6 +117,20 @@ pd_dir = "phase_diagrams"
 # Calculate energy above hull
 e_above_hull = calc.energy_above_hull_from_structure(struct, energy, pd_dir)
 print(f"Energy above hull: {e_above_hull} eV/atom")
+```
+
+
+## Figure Reproducibility Installation
+### 1. Clone and Install the Repository
+```bash
+git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
+cd qmof_thermo
+```
+
+### 2. Construct Figures
+Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`. Running any of the scripts will produce a corresponding folder `qmof_thermo/figures/figure_#` containing the appropriate plot.
+```bash
+python figures/figure_<N>.py
 ```
 
 <!-- 
