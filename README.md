@@ -15,8 +15,37 @@ This respository also includes scripts and CSV to reproduce:
 To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability Installation** directions
 denoted below. In order to utilize the energy-above-hull calculation method, one must follow the **Energy-Above-Hull Calculator Installation** directions and pip install the repository.
 
-## Energy-Above-Hull Calculator Installation
-Upon installation of the qmof_thermo library, users must setup phase diagram constructions.
+
+## Usage
+
+The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
+
+```python
+from ase.io import read
+
+import logging
+import qmof_thermo
+from qmof_thermo.core import calc, relax
+
+# Specify level of logging. Choose between INFO, WARNING, DEBUG
+qmof_thermo.set_log_level(logging.INFO)
+
+# Load your structure
+atoms = read("data/inputs/qmof-XXXXX.cif")
+
+# Relax the structure and get energy
+struct, energy = relax.run_calc(atoms, label="qmof-XXXXX")
+
+# Path to directory containing PhaseDiagram JSON files
+pd_dir = "phase_diagrams"
+
+# Calculate energy above hull
+e_above_hull = calc.energy_above_hull_from_structure(struct, energy, pd_dir)
+print(f"Energy above hull: {e_above_hull} eV/atom")
+```
+
+## Setup Instructions
+
 To obtain energy_above_hull calculations using DFT values from the qmof_thermo database, users must utilize JSON files found in the qmof-thermo [Figshare](https://doi.org/10.6084/m9.figshare.13147324). All necessary steps are outlined below.
 
 ### 1. Clone and Install the Package
@@ -57,11 +86,11 @@ pd_dir = "phase_diagrams"
 setup_pd.setup_phase_diagrams(structures_path, thermo_path, pd_dir)
 ```
 
-## MLIP Relaxation Setup (Optional)
+### 4. MLIP Relaxation Setup (Optional)
 
 If you want to perform structure relaxation using MLIPs, additional setup is required. Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
 
-### Using eSEN
+#### Using eSEN
 
 Place the eSEN model checkpoint file in the `models/` directory:
 
@@ -70,7 +99,7 @@ models/
 └── esen_checkpoint.pt
 ```
 
-### Using UMA
+#### Using UMA
 
 You have two options:
 
@@ -82,44 +111,10 @@ You have two options:
    ```
    Enter your HuggingFace token when prompted.
 
-### Relaxation Output
+## Figure Reproducibility
 
-When running `relax.run_calc()`, the following files are generated in `data/relaxations/<label>/`:
-- Trajectory file (`.traj`)
-- Log file
-- Relaxed structure (`.cif`)
+Scripts to reproduce the figures in the manuscript are also included in this repository and can be run as follows:
 
-## Usage
-
-The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
-### Relax Structure and Calculate Energy Above Hull
-
-```python
-from ase.io import read
-
-import logging
-import qmof_thermo
-from qmof_thermo.core import calc, relax
-
-# Specify level of logging. Choose between INFO, WARNING, DEBUG
-qmof_thermo.set_log_level(logging.INFO)
-
-# Load your structure
-atoms = read("data/inputs/qmof-XXXXX.cif")
-
-# Relax the structure and get energy
-struct, energy = relax.run_calc(atoms, label="qmof-XXXXX")
-
-# Path to directory containing PhaseDiagram JSON files
-pd_dir = "phase_diagrams"
-
-# Calculate energy above hull
-e_above_hull = calc.energy_above_hull_from_structure(struct, energy, pd_dir)
-print(f"Energy above hull: {e_above_hull} eV/atom")
-```
-
-
-## Figure Reproducibility Installation
 ### 1. Clone and Install the Repository
 ```bash
 git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
@@ -131,9 +126,3 @@ Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`
 ```bash
 python figures/figure_<N>.py
 ```
-
-<!--
-## Citation
-
-If you use this package, please cite (tbd)
- -->
