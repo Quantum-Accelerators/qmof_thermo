@@ -116,7 +116,8 @@ cd qmof_thermo
 ```
 
 ### 2. Construct Figures
-Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`. Running any of the scripts will produce a corresponding folder `qmof_thermo/figures/figure_#` containing the appropriate plot.
+Figures 8, S26, S27, S28, S29 each have scripts located in `qmof_thermo/figures`. Running any of the scripts will produce a corresponding folder `qmof_thermo/figures/figure_#` containing the appropriate plot.
 ```bash
 python figures/figure_<N>.py
 ```
+The remaining figures can be directly run in `qmof_thermo/figures`. This will visualize the appropriate plot in the gui and save the figure to `qmof_thermo/figures`. 
