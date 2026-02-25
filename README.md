@@ -1,6 +1,6 @@
 # qmof-thermo
 
-A toolkit for calculating thermodynamic stability (energy above hull) of Metal-Organic Frameworks (MOFs) using machine learning interatomic potentials (MLIPs). 
+A toolkit for calculating thermodynamic stability (energy above hull) of Metal-Organic Frameworks (MOFs) using machine learning interatomic potentials (MLIPs).
 
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
 
@@ -8,7 +8,7 @@ Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limit
 
 This package provides a streamlined workflow to calculate the formation energy and energy above hull for MOFs. In order to utilize the energy-above-hull calculation method, one must follow the **Setup Instructions** directions.
 
-This respository also includes scripts to reproduce key figures in the manuscript. To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability** directions denoted below. 
+This respository also includes scripts to reproduce key figures in the manuscript. To reproduce the manuscript figures, one can simply clone the repository and follow **Figure Reproducability** directions denoted below.
 
 ## Usage
 
