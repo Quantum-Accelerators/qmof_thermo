@@ -85,7 +85,7 @@ You have two options:
 
 ### Relaxation Output
 
-When running `relax.run_calc()`, the following files are generated in `data/relaxations/qmof-XXXXX/`:
+When running `relax.run_calc()`, the following files are generated in `data/relaxations/<label>/`:
 - Trajectory file (`.traj`)
 - Log file
 - Relaxed structure (`.cif`)
@@ -109,7 +109,7 @@ qmof_thermo.set_log_level(logging.INFO)
 atoms = read('data/inputs/qmof-XXXXX.cif')
 
 # Relax the structure and get energy
-struct, energy = relax.run_calc(atoms, mpid="qmof-XXXXX")
+struct, energy = relax.run_calc(atoms, label="qmof-XXXXX")
 
 # Path to directory containing PhaseDiagram JSON files
 pd_dir = "phase_diagrams"
