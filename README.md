@@ -35,11 +35,11 @@ Place the following files anywhere within your accessible directory:
 
 ### 3. Initialize the Phase Diagram
 
-Run the setup script to construct the phase diagram from the reference data. 
-Set `structures_path` to the path of the `reference_thermo_structures.json file`, and set 
-`thermo_path` to the path of the `reference_thermo.json file`. Set `pd_dir` to an accessible empty directory. `pd_dir` will be accessed everytime `calc.energy_above_hull_from_structure()` is called. 
+Run the setup script to construct the phase diagram from the reference data.
+Set `structures_path` to the path of the `reference_thermo_structures.json file`, and set
+`thermo_path` to the path of the `reference_thermo.json file`. Set `pd_dir` to an accessible empty directory. `pd_dir` will be accessed everytime `calc.energy_above_hull_from_structure()` is called.
 
-Here is a sample script one can use to initialize the phase_diagrams. This script will fill `pd_dir` with PhaseDiagram JSON files by chemical space, along with a chemical space to ID mapping JSON file. 
+Here is a sample script one can use to initialize the phase_diagrams. This script will fill `pd_dir` with PhaseDiagram JSON files by chemical space, along with a chemical space to ID mapping JSON file.
 
 ```python
 import logging
@@ -55,7 +55,6 @@ thermo_path = "reference_thermo.json"
 pd_dir = "phase_diagrams"
 
 setup_pd.setup_phase_diagrams(structures_path, thermo_path, pd_dir)
-
 ```
 
 ## MLIP Relaxation Setup (Optional)
@@ -92,7 +91,7 @@ When running `relax.run_calc()`, the following files are generated in `data/rela
 
 ## Usage
 
-The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom. 
+The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
 ### Relax Structure and Calculate Energy Above Hull
 
 ```python
@@ -102,11 +101,11 @@ import logging
 import qmof_thermo
 from qmof_thermo.core import calc, relax
 
-#Specify level of logging. Choose between INFO, WARNING, DEBUG
+# Specify level of logging. Choose between INFO, WARNING, DEBUG
 qmof_thermo.set_log_level(logging.INFO)
 
 # Load your structure
-atoms = read('data/inputs/qmof-XXXXX.cif')
+atoms = read("data/inputs/qmof-XXXXX.cif")
 
 # Relax the structure and get energy
 struct, energy = relax.run_calc(atoms, label="qmof-XXXXX")
@@ -133,7 +132,7 @@ Figures 8, S15, S16, S17, S18 each have scripts located in `qmof_thermo/figures`
 python figures/figure_<N>.py
 ```
 
-<!-- 
+<!--
 ## Citation
 
 If you use this package, please cite (tbd)
