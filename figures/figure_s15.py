@@ -1,28 +1,90 @@
-from __future__ import annotations
-
-from pathlib import Path
-
+import json
 import pandas as pd
-from gen_fig import create_parity_plot, gen_grid, get_energy_columns
+import seaborn as sns
+import matplotlib.pyplot as plt
+import gzip
 
-DATA_PATH = "data/external/{}_12_25_results.csv"
-OUTPUT_DIR = "figures/figure_s15/"
-OUTPUT_PATH = OUTPUT_DIR + "{}_{}_{}_{}.png"
-Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+# 1) Load your results JSON
+with gzip.open("All_qmof_results.json.gz", "rt") as f:
+    data = json.load(f)
 
-graphs = [
-    ["QMOF", "uma", "Total", "A"],
-    ["QMOF", "esen", "Total", "B"],
-    ["MP_ref", "uma", "Total", "C"],
-    ["MP_ref", "esen", "Total", "D"],
-]
+# 2) Build a tidy DataFrame
+df = (
+    pd.DataFrame.from_dict(data, orient="index")
+      .reset_index()
+      .rename(columns={"index": "qmof_id"})
+)
 
-for graph_set in graphs:
-    subset, model_type, calc_type, label = graph_set
-    print(f"Processing: {subset}, {model_type}, {calc_type}")
-    df = pd.read_csv(DATA_PATH.format(model_type))
-    df = df[df["type"] == subset]
-    x_col, y_col = get_energy_columns(calc_type)
-    x, y = df[x_col].to_numpy(), df[y_col].to_numpy()
-    create_parity_plot(x, y, calc_type, model_type, subset, OUTPUT_PATH, label)
-gen_grid(OUTPUT_DIR)
+df = df[[ "ehull", "pore_diameters", "synthesizable", "chemsys"]]
+#df = df[[ "ehull", "pore_diameters", "synthesizable"]]
+df["pore_diameters"] = df["pore_diameters"].str[0]
+
+counts = df["synthesizable"].value_counts()
+print(counts)
+
+df = df[df["synthesizable"] == True]
+
+#df = df[df["chemsys"] == "C-H-N-Zn"]
+
+print(df)
+
+
+counts = df["synthesizable"].value_counts()
+print(counts)
+
+
+color_map = {True: "#6495ED", False: "#FF6347"}
+colors = df["synthesizable"].map(color_map)
+
+# 5) Create scatter plot
+fig, ax = plt.subplots(figsize=(3.4, 2.485))
+plt.scatter(df["pore_diameters"], df["ehull"], c=colors, s=4, alpha=0.4, edgecolors='none')
+plt.xlabel("Largest Cavity Diameter (Å)", fontsize = 8 )
+plt.ylabel("$ΔE_{\mathrm{hull}}$ (eV/atom)", fontsize = 8)
+
+
+ax.tick_params(
+    which='major', direction='in', length=10, width=1.25
+)
+ax.tick_params(
+    which='minor', direction='in', length=5, width=1.25
+)
+
+for spine in ax.spines.values():
+    spine.set_linewidth(1.25)
+
+ax.tick_params(labelsize=8)
+
+ax.minorticks_on()
+
+#plt.legend(handles=[
+#    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#6495ED', markersize=12, label='Synthesized'),
+#    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='#FF6347', markersize=12, label='Not Synthesized')
+#],
+#fontsize = 22,
+#loc = 'best',
+#frameon = False
+#)
+plt.xlim([0, 38])
+plt.ylim([0, 0.82])
+
+#ax.text(
+#    -0.145,    # x position, just left of the left spine
+#    1.0,     # y position, just above the top spine
+#    "B",      # the label
+#    transform=ax.transAxes,   # interpret x,y in axis fraction (0 to 1)
+#    fontsize=11,              # size of the letter
+#    fontweight="bold",        # make it bold
+#    va="top",                 # vertical alignment
+#    ha="left"                 # horizontal alignment
+#)
+
+#plt.xlim([0, 40])
+#plt.ylim([0, 0.82])
+
+plt.tight_layout()
+plt.savefig("FigureS15", dpi=1500, bbox_inches='tight')
+plt.show()
+#s#ns.set_theme(style="ticks")
+
+
