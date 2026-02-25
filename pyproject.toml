@@ -109,6 +109,8 @@ lint.ignore = [
   "RET505", # Unnecessary `elif` after `return`
   "PLC0415", # `import` should be at the top-level of a file
   "T201", # print
+  "EXE002", #shebang
+  "RUF001", # greek letters
 ]
 src = ["src"]
 lint.unfixable = [
