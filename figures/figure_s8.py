@@ -101,7 +101,7 @@ print(f"Non-polymorphs (same MOFid pattern, different composition): {total_match
 # Collect ehull ranges for each polymorph group
 ehull_ranges = []
 
-for pattern, entries in pattern_to_entries.items():
+for _, entries in pattern_to_entries.items():
     if len(entries) > 1:
         frac_comps = [frac_comp_to_tuple(e["frac_composition"]) for e in entries]
 
