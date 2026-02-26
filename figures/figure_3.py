@@ -29,7 +29,7 @@ df = df[df["synthesizable"] == True]
 counts = df["synthesizable"].value_counts()
 print(counts)
 
-ehulls = df["ehull"].values
+ehulls = df["ehull"].to_numpy()
 
 sorted_ehulls = np.sort(ehulls)
 

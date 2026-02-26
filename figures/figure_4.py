@@ -102,7 +102,6 @@ xlabels = [lbl.get_text() for lbl in ax.get_xticklabels()]
 i_pyrene  = xlabels.index("CoRE")
 i_boydwoo = xlabels.index("hMOF-74")    # match exact casing!
 
-# 5) Compute the halfway‐point and draw the dashed line
 x_line = (xticks[i_pyrene] + xticks[i_boydwoo]) / 2
 ax.axvline(x=x_line, linestyle="--", color="black", linewidth=1.25)
 
@@ -110,7 +109,7 @@ ax.axvline(x=x_line, linestyle="--", color="black", linewidth=1.25)
 i_pyrene  = xlabels.index("ToBaCCo-\nCu")
 i_boydwoo = xlabels.index("GHP-\nMOF-\nassemble")    # match exact casing!
 
-# 5) Compute the halfway‐point and draw the dashed line
+
 x_line = (xticks[i_pyrene] + xticks[i_boydwoo]) / 2
 ax.axvline(x=x_line, linestyle="--", color="black", linewidth=1.25)
 

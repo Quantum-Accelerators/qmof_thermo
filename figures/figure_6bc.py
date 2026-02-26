@@ -23,7 +23,7 @@ with gzip.open("All_qmof_results.json.gz", "rt") as f:
 hsab_simple = {
     # Hard acids
     'Li_1': 'Hard', 'Na_1': 'Hard', 'K_1': 'Hard', 'Be_2': 'Hard', 'Mg_2': 'Hard', 'Ca_2': 'Hard', 'Sr_2': 'Hard',
-    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sn_2': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
+    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
     'Zr_4': 'Hard', 'Cr_3': 'Hard', 'Fe_3': 'Hard', 'Co_3': 'Hard', 'Th_4': 'Hard',
     'Pu_4': 'Hard', 'Yb_3': 'Hard', 'Mn_2': 'Hard', 'Gd_3': 'Hard', 'Mn_3': 'Hard', 'Sn_4': 'Hard', 'Lu_3': 'Hard',
     'As_3': 'Hard', 'Si_4': 'Hard', 'U_4': 'Hard', 'Ce_3': 'Hard', 'Hf_4': 'Hard', 'V_3': 'Hard', 'Mo_6': 'Hard', 'Np_6': 'Hard', 'Ce_4': 'Hard',

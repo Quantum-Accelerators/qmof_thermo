@@ -16,7 +16,7 @@ pd.set_option('display.max_colwidth', None)
 hsab_simple = {
     # Hard acids
     'Li_1': 'Hard', 'Na_1': 'Hard', 'K_1': 'Hard', 'Be_2': 'Hard', 'Mg_2': 'Hard', 'Ca_2': 'Hard', 'Sr_2': 'Hard',
-    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sn_2': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
+    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
     'Zr_4': 'Hard', 'Cr_3': 'Hard', 'Fe_3': 'Hard', 'Co_3': 'Hard', 'Co_3': 'Hard', 'Th_4': 'Hard',
     'Pu_4': 'Hard', 'Yb_3': 'Hard', 'Mn_2': 'Hard', 'Gd_3': 'Hard', 'Mn_3': 'Hard', 'Sn_4': 'Hard', 'Lu_3': 'Hard',
     'As_3': 'Hard', 'Si_4': 'Hard', 'Zr_4': 'Hard', 'U_4': 'Hard', 'Ce_3': 'Hard', 'Hf_4': 'Hard', 
@@ -216,7 +216,7 @@ def get_ionic_radius(metal_type, oxidation_state):
         element = Element(metal_type)
         ionic_radius = element.ionic_radii.get(oxidation_state, None)
         return ionic_radius
-    except Exception as e:
+    except:
         return np.nan
 
 # Add ionic radius to the dataframe
@@ -242,7 +242,7 @@ o_only_data = median_ehull_by_group[median_ehull_by_group['no_category'] == 'O_o
 n_only_data = median_ehull_by_group[median_ehull_by_group['no_category'] == 'N_only']
 
 # Plot O-only data with circles, colored by HSAB
-for hsab_class in hsab_colors.keys():
+for hsab_class, value in hsab_colors.items():
     subset = o_only_data[o_only_data['hsab_class'] == hsab_class]
     if not subset.empty:
         ax.scatter(subset["ionic_radius"], subset["ehull"],
@@ -252,7 +252,7 @@ for hsab_class in hsab_colors.keys():
                   edgecolors='black', linewidth=1)
 
 # Plot N-only data with triangles, colored by HSAB
-for hsab_class in hsab_colors.keys():
+for hsab_class, value in hsab_colors.items():
     subset = n_only_data[n_only_data['hsab_class'] == hsab_class]
     if not subset.empty:
         ax.scatter(subset["ionic_radius"], subset["ehull"],

@@ -22,7 +22,7 @@ print(f"Entries with pore_diameters: {df['pore_diameters'].notna().sum()}")
 print(f"Entries WITHOUT pore_diameters (skipped): {df['pore_diameters'].isna().sum()}")
 print(f"Percentage with data: {df['pore_diameters'].notna().sum()/len(df)*100:.1f}%")
 
-missing_pores = df[df['pore_diameters'].isna()]['qmof_id'].values.tolist()
+missing_pores = df[df['pore_diameters'].isna()]['qmof_id'].to_numpy().tolist()
 if missing_pores:
     print(f"\n=== Entries WITHOUT pore_diameters ({len(missing_pores)}) ===")
     for qmof_id in missing_pores[:20]:  # Show first 20

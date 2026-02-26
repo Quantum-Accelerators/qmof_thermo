@@ -27,7 +27,7 @@ df = df[df["synthesizable"] == True]
 counts = df["synthesizable"].value_counts()
 print(counts)
 
-ehulls = df["ehull"].values
+ehulls = df["ehull"].to_numpy()
 
 fig, ax = plt.subplots(figsize=(8, 6))
 stats.probplot(ehulls, dist="norm", plot=plt)
@@ -42,7 +42,7 @@ dots_line.set_markeredgewidth(1.5)    # edge width
 dots_line.set_markeredgecolor('k')    # black edge
 dots_line.set_markerfacecolor('k')   # e.g. matplotlib “C1” (orange) fill
 dots_line.set_label('MOF Quantiles')
-# change fit‐line width & color (and style, if you like)
+
 fit_line.set_linewidth(2.5)
 fit_line.set_color('r')              # e.g. “C3” (green)
 fit_line.set_linestyle('-')          # dashed
@@ -68,8 +68,6 @@ ax.tick_params(labelsize=20)
 
 ax.minorticks_on()
 
-#plt.ylim([0, 0.55])
-#plt.title("Q–Q Plot of Synthesized Ehull vs. Normal Distribution")
 plt.xlabel("Normal Theoretical Quantiles", fontsize = 22)
 plt.ylabel("Δ$E_{\mathrm{hull}}$ (eV/atom)", fontsize = 22)
 

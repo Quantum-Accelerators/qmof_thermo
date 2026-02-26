@@ -26,13 +26,13 @@ mp_df = (
 
 # Fix 2: Correct filtering syntax
 # Fix 3: .values (no parentheses)
-mp_syn_ehull = mp_df[mp_df["theoretical"] == True]["energy_above_hull"].values
+mp_syn_ehull = mp_df[mp_df["theoretical"] == True]["energy_above_hull"].to_numpy()
 
-mp_nonsyn_ehull = mp_df[mp_df["theoretical"] == False]["energy_above_hull"].values
+mp_nonsyn_ehull = mp_df[mp_df["theoretical"] == False]["energy_above_hull"].to_numpy()
 
-mp_syn_eform = mp_df[mp_df["theoretical"] == True]["formation_energy_per_atom"].values
+mp_syn_eform = mp_df[mp_df["theoretical"] == True]["formation_energy_per_atom"].to_numpy()
 
-mp_nonsyn_eform = mp_df[mp_df["theoretical"] == False]["formation_energy_per_atom"].values
+mp_nonsyn_eform = mp_df[mp_df["theoretical"] == False]["formation_energy_per_atom"].to_numpy()
 
 mp_ehull = np.concatenate([mp_syn_ehull, mp_nonsyn_ehull])
 mp_eform = np.concatenate([mp_syn_eform, mp_nonsyn_eform])

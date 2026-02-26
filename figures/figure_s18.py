@@ -59,7 +59,7 @@ for topology in sorted_filter_list_ehull:
 # Create a combined statistics DataFrame
 stats_df = pd.DataFrame({
     'topology': median_ehull.index,
-    'median_ehull': median_ehull.values,
+    'median_ehull': median_ehull.to_numpy(),
     'count': [counts[top] for top in median_ehull.index],
     'median_pore_diameter': [median_pore[top] if top in median_pore.index else np.nan 
                              for top in median_ehull.index]
