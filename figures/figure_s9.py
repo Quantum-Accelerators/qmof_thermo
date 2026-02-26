@@ -5,6 +5,8 @@ import seaborn as sns
 import numpy as np
 from scipy.stats import norm
 import gzip
+from matplotlib.ticker import MultipleLocator
+
 
 with gzip.open("All_qmof_results.json.gz", "rt") as f:
     data = json.load(f)
@@ -19,7 +21,7 @@ df = (
 df = df[[ "ehull", "synthesizable"]]
 df = df[df["synthesizable"] == True]
 
-ehulls = df["ehull"].values
+ehulls = df["ehull"].to_numpy()
 
 
 mu, sigma = ehulls.mean(), ehulls.std()
@@ -70,8 +72,6 @@ ax.tick_params(
 plt.grid(False)
 
 
-
-from matplotlib.ticker import MultipleLocator
 
 # Add this after creating the plot and before plt.tight_layout()
 ax.yaxis.set_major_locator(MultipleLocator(0.05))

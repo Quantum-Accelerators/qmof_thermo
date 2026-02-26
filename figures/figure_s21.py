@@ -129,12 +129,10 @@ df_filtered = df_filtered[df_filtered['metal_key'].isin(target_metals.keys())].c
 
 # Create display labels with counts
 metal_counts = {}
-for metal_key, value in target_metals.items():
+for metal_key, metal_label in target_metals.items():
     metal_data = df_filtered[df_filtered['metal_key'] == metal_key]
     carboxylate_count = len(metal_data[metal_data['linker_category'] == 'Carboxylate'])
     azolate_count = len(metal_data[metal_data['linker_category'] == 'Azolate'])
-    
-    metal_label = target_metals[metal_key]
     label_with_counts = f"{metal_label}\n(C: {carboxylate_count}, A: {azolate_count})"
     metal_counts[metal_key] = label_with_counts
 
@@ -207,11 +205,9 @@ plt.show()
 print("\nDetailed Statistics by Metal and Linker Type (N/O filtered):")
 print("=" * 80)
 
-for metal_key, value in target_metals.items():
-    metal_label = target_metals[metal_key]
+for metal_key, metal_label in target_metals.items():
     print(f"\n{metal_label}:")
     metal_data = df_filtered[df_filtered['metal_key'] == metal_key]
-    
     for linker_cat in ['Carboxylate', 'Azolate']:
         subset = metal_data[metal_data['linker_category'] == linker_cat]
         if len(subset) > 0:
@@ -219,10 +215,8 @@ for metal_key, value in target_metals.items():
             mean_ehull = subset['ehull'].mean()
             std_ehull = subset['ehull'].std()
             count = len(subset)
-            
             # Show N/O breakdown
             no_breakdown = subset['no_category'].value_counts()
-            
             print(f"  {linker_cat}: {count} MOFs")
             print(f"    Median: {median_ehull:.4f} eV/atom")
             print(f"    Mean ± Std: {mean_ehull:.4f} ± {std_ehull:.4f} eV/atom")

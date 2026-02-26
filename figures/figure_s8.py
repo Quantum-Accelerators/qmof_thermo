@@ -1,6 +1,12 @@
 import json
 from collections import defaultdict
 import gzip
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 # Load data
 with gzip.open("All_qmof_results.json.gz", "rt") as f:
     data = json.load(f)
@@ -56,30 +62,25 @@ print("=" * 100)
 polymorph_count = 0
 polymorph_groups = 0
 
-for pattern, entries in sorted(pattern_to_entries.items()):
+
+for (node, linker), entries in sorted(pattern_to_entries.items()):
     if len(entries) > 1:  # Multiple entries with same pattern
         # Check if all have the same frac_composition
         frac_comps = [frac_comp_to_tuple(e["frac_composition"]) for e in entries]
-        
         # Skip if any frac_composition is None
         if None in frac_comps:
             continue
-        
         # Check if all frac_compositions are identical
         if len(set(frac_comps)) == 1:  # All the same
             polymorph_groups += 1
             polymorph_count += len(entries)
-            
-            node, linker = pattern
             print(f"\nPattern: Node=[{node}], Linker=[{linker}]")
             print(f"Number of polymorphs: {len(entries)}")
-            
             # Print composition
             frac_comp = entries[0]["frac_composition"]
             comp_str = ", ".join([f"{k}: {v:.3f}" for k, v in sorted(frac_comp.items())])
             print(f"Composition: {comp_str}")
             print("-" * 100)
-            
             for entry in entries:
                 synth_str = "Synthesized" if entry["synthesizable"] else "Not Synthesized"
                 print(f"  {entry['qmof_id']:<20} | {synth_str:<20} | E_hull: {entry['ehull']:<10.4f} | {entry['mofid']}")
@@ -96,9 +97,6 @@ print(f"True polymorph groups (same composition): {polymorph_groups}")
 print(f"Total polymorphs: {polymorph_count}")
 print(f"Non-polymorphs (same MOFid pattern, different composition): {total_matched_entries - polymorph_count}")
 
-
-import matplotlib.pyplot as plt
-import numpy as np
 
 # Collect ehull ranges for each polymorph group
 ehull_ranges = []

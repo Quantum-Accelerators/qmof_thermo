@@ -242,24 +242,24 @@ o_only_data = median_ehull_by_group[median_ehull_by_group['no_category'] == 'O_o
 n_only_data = median_ehull_by_group[median_ehull_by_group['no_category'] == 'N_only']
 
 # Plot O-only data with circles, colored by HSAB
-for hsab_class, value in hsab_colors.items():
+for hsab_class, color in hsab_colors.items():
     subset = o_only_data[o_only_data['hsab_class'] == hsab_class]
     if not subset.empty:
         ax.scatter(subset["ionic_radius"], subset["ehull"],
-                  s=140, c=hsab_colors[hsab_class], alpha=1,
-                  marker='o',  # circles
-                  label=hsab_class if hsab_class in o_only_data['hsab_class'].to_numpy() else "",
+                  s=140, c=color, alpha=1,
+                  marker='o',
+                  label=f"{hsab_class} (O-only)",
                   edgecolors='black', linewidth=1)
 
-# Plot N-only data with triangles, colored by HSAB
-for hsab_class, value in hsab_colors.items():
+# Plot N-only data with triangles
+for hsab_class, color in hsab_colors.items():
     subset = n_only_data[n_only_data['hsab_class'] == hsab_class]
     if not subset.empty:
         ax.scatter(subset["ionic_radius"], subset["ehull"],
-                  s=140, c=hsab_colors[hsab_class], alpha=1,
-                  marker='^',  # triangles
+                  s=140, c=color, alpha=1,
+                  marker='^',
+                  label=f"{hsab_class} (N-only)",
                   edgecolors='black', linewidth=1)
-
 # Add element labels with oxidation states
 #texts = []
 #for idx, row in median_ehull_by_group.iterrows():

@@ -224,7 +224,7 @@ bottom = np.zeros(len(sorted_categories))
 bars = []
 for hsab_class in hsab_order:
     if hsab_class in pivot_data.columns:
-        values = pivot_data[hsab_class].values
+        values = pivot_data[hsab_class].to_numpy()
         bar = ax.bar(range(len(sorted_categories)), values, bottom=bottom, 
                      label=hsab_class, color=hsab_colors[hsab_class], width=0.7)
         bars.append(bar)
