@@ -28,7 +28,11 @@ df = (
 rename_map = {
     "Haranczyk_MOF5": "Mail-Order\nMOF-5",
     "Haranczyk_MOF74":  "hMOF-74",
-    "ghp": "GHP-\nMOFassemble",
+    "ghp": "GHP-\nMOF-\nassemble",
+    "Anderson": "Anderson-\nZr/Hf",
+    "ToBaCCo": "ToBaCCo-\nCu",
+    "MOFFUSION": "MOF-\nFUSION",
+    "BoydWoo": "Boyd-\nWoo"
     # add as many as you like…
 }
 
@@ -38,7 +42,7 @@ df["source"] = df["source"].replace(rename_map)
 df = df[["ehull", "source", "synthesizable", "chemsys"]]
 #df = df[df["chemsys"] == "C-H-N-O-Zn"]
 # 3) Choose which sources you want to plot (e.g. CSD, CoRE, BoydWoo)
-filter_list = ["Pyrene", "CSD", "CoRE", "hMOF-74", "Mail-Order\nMOF-5", "GMOF", "BoydWoo", "Anderson", "ToBaCCo", "GHP-\nMOFassemble", "MOFFUSION", "MOFDiff"]
+filter_list = ["Pyrene", "CSD", "CoRE", "hMOF-74", "Mail-Order\nMOF-5", "GMOF", "Boyd-\nWoo", "Anderson-\nZr/Hf", "ToBaCCo-\nCu", "GHP-\nMOF-\nassemble", "MOF-\nFUSION", "MOFDiff"]
 
 # 4) Filter the DataFrame to only those sources
 
@@ -103,8 +107,8 @@ x_line = (xticks[i_pyrene] + xticks[i_boydwoo]) / 2
 ax.axvline(x=x_line, linestyle="--", color="black", linewidth=1.25)
 
 
-i_pyrene  = xlabels.index("ToBaCCo")
-i_boydwoo = xlabels.index("GHP-\nMOFassemble")    # match exact casing!
+i_pyrene  = xlabels.index("ToBaCCo-\nCu")
+i_boydwoo = xlabels.index("GHP-\nMOF-\nassemble")    # match exact casing!
 
 # 5) Compute the halfway‐point and draw the dashed line
 x_line = (xticks[i_pyrene] + xticks[i_boydwoo]) / 2
@@ -113,20 +117,41 @@ ax.axvline(x=x_line, linestyle="--", color="black", linewidth=1.25)
 
 
 new_labels = [
-    f"{src} ({counts[src]})"
+    f"{src} ({counts[src]})" 
+    if src in ["ToBaCCo-\nCu"]#, "Anderson-\nZr/Hf"]#, "GHP-\nMOFassemble"]
+    else f"{src}\n({counts[src]})"
     for src in filter_list
 ]
+
 ax.set_xticklabels(new_labels, rotation=22.5, fontsize=8)
 
 labels = ax.get_xticklabels()
-ghp_index = filter_list.index("GHP-\nMOFassemble")
+ghp_index = filter_list.index("GHP-\nMOF-\nassemble")
 labels[ghp_index].set_verticalalignment('top')
-labels[ghp_index].set_y(0.05)
+labels[ghp_index].set_y(0.03)
 
 labels = ax.get_xticklabels()
 ghp_index = filter_list.index("Mail-Order\nMOF-5")
 labels[ghp_index].set_verticalalignment('top')
 labels[ghp_index].set_y(0.015)
+
+labels = ax.get_xticklabels()
+ghp_index = filter_list.index("Boyd-\nWoo")
+labels[ghp_index].set_verticalalignment('top')
+labels[ghp_index].set_y(-0.015)
+
+labels = ax.get_xticklabels()
+ghp_index = filter_list.index("Anderson-\nZr/Hf")
+labels[ghp_index].set_verticalalignment('top')
+labels[ghp_index].set_y(0.02)
+
+labels = ax.get_xticklabels()
+ghp_index = filter_list.index("ToBaCCo-\nCu")
+labels[ghp_index].set_verticalalignment('top')
+labels[ghp_index].set_y(0.0)
+
+
+
 
 
 

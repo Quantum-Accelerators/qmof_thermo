@@ -27,6 +27,15 @@ for row, (mol, label) in enumerate(zip(elements, labels)):
     df = df.assign(molfrac=df["frac_composition"].apply(lambda d: d[mol]))
     
     # Left column: formation_energy
+    
+    #corr_eform, pval_eform = spearmanr(df["molfrac"], df["formation_energy"])
+    #corr_ehull, pval_ehull = spearmanr(df["molfrac"], df["ehull"])
+    #print("\n=== Spearman Correlation Coefficients ===")
+    #print(f"{mol} Fraction vs Formation Energy: ρ = {corr_eform:.4f}, p-value = {pval_eform}")
+    #print(f"{mol} Fraction vs Energy Above Hull: ρ = {corr_ehull:.4f}, p-value = {pval_ehull}")
+    #print(f"Sample size: {len(df)}")
+
+
     ax_left = axes[row, 0]
     hb_left = ax_left.hexbin(df["molfrac"], df["formation_energy"],
                              gridsize=50, cmap='viridis', mincnt=1,
@@ -48,8 +57,7 @@ for row, (mol, label) in enumerate(zip(elements, labels)):
     ax_left.set_ylabel("Δ$E_{\mathrm{form}}$ (eV/atom)", fontsize=18)
     
     # X-label only on bottom row
-    if row == 2:
-        ax_left.set_xlabel(f"{element_names[mol]} Fraction", fontsize=18)
+    ax_left.set_xlabel(f"{element_names[mol]} Fraction", fontsize=18)
     
     # Add A, B, C labels to left column only
     ax_left.text(-0.165, 1.06, label, transform=ax_left.transAxes,
@@ -77,8 +85,8 @@ for row, (mol, label) in enumerate(zip(elements, labels)):
     ax_right.set_ylabel("Δ$E_{\mathrm{hull}}$ (eV/atom)", fontsize=18)
     
     # X-label only on bottom row
-    if row == 2:
-        ax_right.set_xlabel(f"{element_names[mol]} Fraction", fontsize=18)
+
+    ax_right.set_xlabel(f"{element_names[mol]} Fraction", fontsize=18)
 
 plt.tight_layout()
 plt.savefig("FigureS24.png", bbox_inches='tight', dpi=500)
