@@ -265,7 +265,7 @@ group_order = []
 for element in ['O-only', 'N-only']:
     for hsab in ['Hard', 'Borderline', 'Soft']:
         group_name = f'{element}\n{hsab}'
-        if group_name in df_b['group'].values:
+        if group_name in df_b['group'].to_numpy():
             group_order.append(group_name)
 
 print(f"Group order: {group_order}")

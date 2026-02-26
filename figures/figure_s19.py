@@ -6,6 +6,8 @@ import numpy as np
 from pymatgen.core.periodic_table import Element
 from adjustText import adjust_text
 import gzip
+from matplotlib.lines import Line2D
+
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -212,13 +214,11 @@ print(f"Groups after filtering (≥8 entries): {len(median_ehull_by_group)}")
 
 def get_ionic_radius(metal_type, oxidation_state):
     """Get ionic radius using pymatgen"""
-    try:
-        element = Element(metal_type)
-        ionic_radius = element.ionic_radii.get(oxidation_state, None)
-        return ionic_radius
-    except:
-        return np.nan
 
+    element = Element(metal_type)
+    ionic_radius = element.ionic_radii.get(oxidation_state, None)
+    return ionic_radius
+    
 # Add ionic radius to the dataframe
 median_ehull_by_group['ionic_radius'] = median_ehull_by_group.apply(
     lambda row: get_ionic_radius(row['metal_type'], row['oxidation_state']), axis=1
@@ -248,7 +248,7 @@ for hsab_class, value in hsab_colors.items():
         ax.scatter(subset["ionic_radius"], subset["ehull"],
                   s=140, c=hsab_colors[hsab_class], alpha=1,
                   marker='o',  # circles
-                  label=hsab_class if hsab_class in o_only_data['hsab_class'].values else "",
+                  label=hsab_class if hsab_class in o_only_data['hsab_class'].to_numpy() else "",
                   edgecolors='black', linewidth=1)
 
 # Plot N-only data with triangles, colored by HSAB
@@ -289,8 +289,6 @@ ax.tick_params(axis='y', which='major', pad=12)
 plt.xlabel('Ionic Radius (Å)', fontsize=22)
 plt.ylabel('Median Δ$E_{\mathrm{hull}}$ (eV/atom)', fontsize=22)
 
-# Create custom legend
-from matplotlib.lines import Line2D
 
 # Legend for HSAB classification (colors)
 hsab_legend_elements = [Line2D([0], [0], marker='o', color='w', 

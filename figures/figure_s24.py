@@ -21,20 +21,12 @@ element_names = {
 # Build base dataframe once
 df_all = pd.DataFrame.from_dict(data, orient="index").rename_axis("qmof_id")
 
-for row, (mol, label) in enumerate(zip(elements, labels)):
+for row, (mol, label) in enumerate(zip(elements, labels, strict=False)):
     # Filter for this element
-    df = df_all[df_all["frac_composition"].apply(lambda d: mol in d)]
-    df = df.assign(molfrac=df["frac_composition"].apply(lambda d: d[mol]))
-    
+    df = df_all[df_all["frac_composition"].apply(lambda d, m=mol: m in d)]
+    df = df.assign(molfrac=df["frac_composition"].apply(lambda d, m=mol: d[m])) 
     # Left column: formation_energy
     
-    #corr_eform, pval_eform = spearmanr(df["molfrac"], df["formation_energy"])
-    #corr_ehull, pval_ehull = spearmanr(df["molfrac"], df["ehull"])
-    #print("\n=== Spearman Correlation Coefficients ===")
-    #print(f"{mol} Fraction vs Formation Energy: ρ = {corr_eform:.4f}, p-value = {pval_eform}")
-    #print(f"{mol} Fraction vs Energy Above Hull: ρ = {corr_ehull:.4f}, p-value = {pval_ehull}")
-    #print(f"Sample size: {len(df)}")
-
 
     ax_left = axes[row, 0]
     hb_left = ax_left.hexbin(df["molfrac"], df["formation_energy"],

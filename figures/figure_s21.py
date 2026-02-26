@@ -129,7 +129,7 @@ df_filtered = df_filtered[df_filtered['metal_key'].isin(target_metals.keys())].c
 
 # Create display labels with counts
 metal_counts = {}
-for metal_key in target_metals.keys():
+for metal_key, value in target_metals.items():
     metal_data = df_filtered[df_filtered['metal_key'] == metal_key]
     carboxylate_count = len(metal_data[metal_data['linker_category'] == 'Carboxylate'])
     azolate_count = len(metal_data[metal_data['linker_category'] == 'Azolate'])
@@ -207,7 +207,7 @@ plt.show()
 print("\nDetailed Statistics by Metal and Linker Type (N/O filtered):")
 print("=" * 80)
 
-for metal_key in target_metals.keys():
+for metal_key, value in target_metals.items():
     metal_label = target_metals[metal_key]
     print(f"\n{metal_label}:")
     metal_data = df_filtered[df_filtered['metal_key'] == metal_key]

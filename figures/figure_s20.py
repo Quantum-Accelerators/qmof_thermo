@@ -17,8 +17,8 @@ pd.set_option('display.max_colwidth', None)
 hsab_simple = {
     # Hard acids
     'Li_1': 'Hard', 'Na_1': 'Hard', 'K_1': 'Hard', 'Be_2': 'Hard', 'Mg_2': 'Hard', 'Ca_2': 'Hard', 'Sr_2': 'Hard',
-    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sn_2': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
-    'Zr_4': 'Hard', 'Cr_3': 'Hard', 'Fe_3': 'Hard', 'Co_3': 'Hard', 'Co_3': 'Hard', 'Ir_3': 'Hard', 'Th_4': 'Hard',
+    'Al_3': 'Hard', 'Ga_3': 'Hard', 'In_3': 'Hard', 'Sc_3': 'Hard', 'La_3': 'Hard', 'Ti_4': 'Hard',
+    'Zr_4': 'Hard', 'Cr_3': 'Hard', 'Fe_3': 'Hard', 'Co_3': 'Hard', 'Co_3': 'Hard', 'Th_4': 'Hard',
     'Pu_4': 'Hard', 'Yb_3': 'Hard', 'Mn_2': 'Hard', 'Gd_3': 'Hard', 'Mn_3': 'Hard', 'Sn_4': 'Hard', 'Lu_3': 'Hard',
     'As_3': 'Hard', 'Si_4': 'Hard', 'Zr_4': 'Hard', 'U_4': 'Hard', 'Ce_3': 'Hard', 'Hf_4': 'Hard',
     # Soft acids
@@ -204,7 +204,7 @@ median_ehull = df_filtered.groupby("linker_category")["ehull"].median().sort_val
 sorted_categories = median_ehull.index.tolist()
 
 # Create pivot table for stacked bar plot
-pivot_data = hsab_counts.pivot(index='linker_category', columns='hsab_class', values='proportion')
+pivot_data = hsab_counts.pivot_table(index='linker_category', columns='hsab_class', values='proportion')
 pivot_data = pivot_data.reindex(sorted_categories)  # Order by median ehull
 pivot_data = pivot_data.fillna(0)  # Fill missing values with 0
 

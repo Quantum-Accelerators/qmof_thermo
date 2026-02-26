@@ -47,7 +47,7 @@ for formula, color in to_highlight.items():
         ax.scatter(sub["molfrac"],
                    sub["formation_energy_per_atom"],
                    c=color, s=30, linewidth=1.2,
-                   label = sub["formula_latex"].iat[0])
+                   label = sub["formula_latex"].iloc[0])
 
 rest = df[~df["formula"].isin(to_highlight)]
 ax.scatter(rest["molfrac"],
