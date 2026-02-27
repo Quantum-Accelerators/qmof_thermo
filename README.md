@@ -16,9 +16,9 @@ The following script allows users to relax a CIF file using an MLIP, as well as 
 
 ```python
 import logging
-from qmof_thermo import set_log_level
 
 from ase.io import read
+from qmof_thermo import set_log_level
 from qmof_thermo.core import calc, relax
 
 # Specify level of logging. Choose between INFO, WARNING, DEBUG
