@@ -26,7 +26,7 @@ def pd_dir(tmp_path_factory):
 @pytest.fixture
 def relaxed_structure():
     atoms = read(TEST_DATA_DIR / "qmof-bda2f7d_relaxed.cif")
-    return Structure.from_ase_atoms(atoms)
+    return Structure.from_ase_atoms(atoms)  # type: ignore
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def unrelaxed_atoms():
 def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
-    setup_pd.setup_phase_diagrams(structures_path, thermo_path, pd_dir)
+    setup_pd.setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
 
     with open(pd_dir / "('C', 'H', 'N', 'O', 'Zn')_phase_diagram.json") as f:
         new_chem_space = json.load(f)

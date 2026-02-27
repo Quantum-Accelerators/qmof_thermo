@@ -1,6 +1,6 @@
 # qmof-thermo
 
-A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of Metal–Organic Frameworks (MOFs) using machine learning interatomic potentials (MLIPs).
+A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of metal–organic frameworks (MOFs) using machine-learned interatomic potentials (MLIPs).
 
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
 
@@ -42,42 +42,33 @@ print(f"Energy above hull: {e_above_hull} eV/atom")
 
 To obtain energy_above_hull calculations using DFT values from the qmof_thermo database, users must utilize JSON files found in the qmof-thermo [Figshare](https://doi.org/10.6084/m9.figshare.13147324). All necessary steps are outlined below.
 
-### 1. Clone and Install the Package
+### 1. Install the Package
 
 ```bash
 pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
 ```
 
-### 2. Download the QMOF Thermodynamics Database
+### 2. Download the QMOF-Thermo Database
 
 Download the qmof-thermo database files from [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
 
-Place the following files anywhere within your accessible directory:
+Place the following files anywhere within an accessible directory:
+
 - `reference_thermo_structures.json`
 - `reference_structures.json`
 
 ### 3. Initialize the Phase Diagram
 
-Run the setup script to construct the phase diagram from the reference data.
-Set `structures_path` to the path of the `reference_thermo_structures.json file`, and set
-`thermo_path` to the path of the `reference_thermo.json file`. Set `pd_dir` to an accessible empty directory. `pd_dir` will be accessed everytime `calc.energy_above_hull_from_structure()` is called.
-
-Here is a sample script one can use to initialize the phase_diagrams. This script will fill `pd_dir` with PhaseDiagram JSON files by chemical space, along with a chemical space to ID mapping JSON file.
+Construct and save the phase diagram from the reference data. An example is provided below.
 
 ```python
-import logging
-
-
-import qmof_thermo
 from qmof_thermo.core import setup_pd
 
-qmof_thermo.set_log_level(logging.INFO)
+structures_path = "/path/to/reference_thermo_structures.json"
+thermo_path = "/path/to/reference_thermo.json"
+output_dir = "phase_diagrams" # path to store cached phase diagrams
 
-structures_path = "reference_thermo_structures.json"
-thermo_path = "reference_thermo.json"
-pd_dir = "phase_diagrams"
-
-setup_pd.setup_phase_diagrams(structures_path, thermo_path, pd_dir)
+setup_pd.setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
 
 ### 4. MLIP Relaxation Setup (Optional)
@@ -110,6 +101,7 @@ You have two options:
 Scripts to reproduce the figures in the manuscript are also included in this repository and can be run as follows:
 
 ### 1. Clone and Install the Repository
+
 ```bash
 git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
 cd qmof_thermo

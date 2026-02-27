@@ -36,7 +36,7 @@ class HullEntry:
     elements: frozenset[str]  # e.g. set ({"Ba", "O", "V"})
 
 
-def chemical_space_from_structure(struct: Structure) -> set[str]:
+def chemical_space_from_structure(struct: Structure) -> frozenset[str]:
     """
     Extract the chemical space from a structure as a frozenset of element symbols.
 
@@ -295,7 +295,7 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
 def setup_phase_diagrams(
     structures_path: str | Path,
     thermo_path: str | Path,
-    output_dir: str | Path,
+    output_dir: str | Path = Path("phase_diagrams"),
     id_key: str = "mpid",
     energy_key: str = "energy_total",
     ehull_key: str = "energy_above_hull",

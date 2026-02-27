@@ -82,7 +82,7 @@ def run_calc(
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
-        task_name=uma_task_name if "uma" in model else None,
+        task_name=uma_task_name if "uma" in str(model) else None,
         device=device,
     )
 
@@ -93,7 +93,7 @@ def run_calc(
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
-    opt = BFGS(filter_atoms, trajectory=traj_path, logfile=log_path)
+    opt = BFGS(filter_atoms, trajectory=traj_path, logfile=log_path)  # type: ignore
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
@@ -106,7 +106,7 @@ def run_calc(
     )
 
     final_atoms = read(traj_path, index=-1)  # last frame
-    final_struct = AseAtomsAdaptor.get_structure(final_atoms)
+    final_struct = AseAtomsAdaptor.get_structure(final_atoms)  # type: ignore
     cif_path = out_dir / f"{label}.cif"
     write(cif_path, final_atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
