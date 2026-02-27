@@ -83,7 +83,7 @@ if len(differences_below) > 0:
     ax1.set_ylabel("Normalized Frequency", fontsize=14)
     ax1.set_title(
         r"Main Distribution of nonzero ΔΔ$E_{\mathrm{hull}}$"
-        + f" (≤ {filter_val} eV/atom)\n$n$ = {len(differences_below)}",
+         f" (≤ {filter_val} eV/atom)\n$n$ = {len(differences_below)}",
         fontsize=14,
     )
 
@@ -123,7 +123,7 @@ if len(differences_above) > 0:
     ax2.set_ylabel("Normalized Frequency", fontsize=14)
     ax2.set_title(
         r"Outliers of nonzero ΔΔ$E_{\mathrm{hull}}$"
-        + f"(> {filter_val} eV/atom)\n$n$ = {len(differences_above)}",
+         f"(> {filter_val} eV/atom)\n$n$ = {len(differences_above)}",
         fontsize=14,
     )
 
