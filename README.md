@@ -120,4 +120,4 @@ Figures 8, S26, S27, S28, S29 each have scripts located in `qmof_thermo/figures`
 ```bash
 python figures/figure_<N>.py
 ```
-The remaining figures can be directly run in `qmof_thermo/figures`. This will visualize the appropriate plot in the gui and save the figure to `qmof_thermo/figures`. 
+The remaining figures can be directly run in `qmof_thermo/figures`. This will visualize the appropriate plot in the gui and save the figure to `qmof_thermo/figures`.
