@@ -111,6 +111,7 @@ lint.ignore = [
   "T201", # print
   "EXE002", #shebang
   "RUF001", # greek letters
+  "RUF003", # hyphens
 ]
 src = ["src"]
 lint.unfixable = [
