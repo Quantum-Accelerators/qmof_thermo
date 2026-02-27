@@ -15,14 +15,14 @@ This respository also includes scripts to reproduce key figures in the manuscrip
 The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
 
 ```python
-from ase.io import read
-
 import logging
-import qmof_thermo
+from qmof_thermo import set_log_level
+
+from ase.io import read
 from qmof_thermo.core import calc, relax
 
 # Specify level of logging. Choose between INFO, WARNING, DEBUG
-qmof_thermo.set_log_level(logging.INFO)
+set_log_level(logging.INFO)
 
 # Load your structure
 atoms = read("data/inputs/qmof-XXXXX.cif")
