@@ -29,12 +29,10 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-optimized_atoms, energy = relax_mof(
-    atoms, model="uma-s-1p1.pt", fmax=0.05, label="mymof"
-)
+energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.05, label="mymof")
 
 # Calculate energy above hull
-e_above_hull = get_energy_above_hull(optimized_atoms, energy)
+e_above_hull = get_energy_above_hull(atoms, energy)
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
@@ -56,9 +54,9 @@ Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed i
 
 You have two options:
 
-1. *Local checkpoint*: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
+1. _Local checkpoint_: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
 
-2. *HuggingFace*: Log in with your HuggingFace credentials to download the model automatically:
+2. _HuggingFace_: Log in with your HuggingFace credentials to download the model automatically:
 
    ```bash
    hf auth login
@@ -68,7 +66,7 @@ You have two options:
 
 #### eSEN-ODAC
 
-*Local checkpoint*: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
+_Local checkpoint_: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
 
 ## Advanced: Phase Diagram Reconstruction
 
