@@ -41,10 +41,10 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-struct, energy = relax_mof(atoms, model="uma-s-1p1", label="mymof")
+struct, energy = relax_mof(atoms, model="uma-s-1p1", fmax=0.01, label="mymof")
 
 # Path to directory containing PhaseDiagram JSON files
-pd_dir = "phase_diagrams"
+references_dir = "phase_diagrams"
 
 # Calculate energy above hull
 e_above_hull = get_energy_above_hull(struct, energy, references_dir=pd_dir)
