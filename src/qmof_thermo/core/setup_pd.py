@@ -14,7 +14,6 @@ LOGGER = getLogger(__name__)
 
 DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
-
 @dataclass
 class HullEntry:
     """
@@ -40,7 +39,7 @@ class HullEntry:
 
 def chemical_space_from_structure(struct: Structure) -> set[str]:
     """
-    Extract the chemical space from a structure as a frozenset of element symbols.
+    Extract the chemical space from a structure as a set of element symbols.
 
     Parameters
     ----------
@@ -49,10 +48,10 @@ def chemical_space_from_structure(struct: Structure) -> set[str]:
 
     Returns
     -------
-    frozenset[str]
-        Frozenset of element symbols present in the structure's composition.
+    set[str]
+        Set of element symbols present in the structure's composition.
     """
-    return frozenset(str(el.symbol) for el in struct.composition.elements)
+    return {str(el.symbol) for el in struct.composition.elements}
 
 
 def _load_hull_entries(
@@ -172,7 +171,7 @@ def _load_hull_entries(
 
         struct = struct_lookup[mpid]
         energy = float(hull_energy_lookup[mpid])
-        elements = chemical_space_from_structure(struct)
+        elements = frozenset(chemical_space_from_structure(struct))
 
         all_entries.append(HullEntry(mpid, struct, energy, elements))
         used_count += 1
