@@ -47,7 +47,7 @@ struct, energy = relax_mof(atoms, model="uma-s-1p1", fmax=0.01, label="mymof")
 references_dir = "phase_diagrams"
 
 # Calculate energy above hull
-e_above_hull = get_energy_above_hull(struct, energy, references_dir=pd_dir)
+e_above_hull = get_energy_above_hull(struct, energy, references_dir=references_dir)
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
