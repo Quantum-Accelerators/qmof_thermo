@@ -60,7 +60,7 @@ from qmof_thermo.core.phase_diagram import setup_phase_diagrams
 
 structures_path = "/path/to/reference_thermo_structures.json"
 thermo_path = "/path/to/reference_thermo.json"
-output_dir = "phase_diagrams" # path to store cached phase diagrams
+output_dir = "phase_diagrams"  # path to store cached phase diagrams
 
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
