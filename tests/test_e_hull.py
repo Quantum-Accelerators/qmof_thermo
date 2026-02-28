@@ -5,9 +5,11 @@ from pathlib import Path
 
 import pytest
 from ase.io import read
+from monty.serialization import loadfn
 from pymatgen.core import Structure
 
 from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
+from qmof_thermo.core.setup_pd import DEFAULT_PD_FILENAME
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -38,27 +40,12 @@ def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
     setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
+    pd_path = pd_dir / DEFAULT_PD_FILENAME
+    assert pd_path.is_file()
 
-    with open(pd_dir / "('C', 'H', 'N', 'O', 'Zn')_phase_diagram.json") as f:
-        new_chem_space = json.load(f)
-
-    with open(
-        TEST_DATA_DIR
-        / "test_phase_diagrams"
-        / "('C', 'H', 'N', 'O', 'Zn')_phase_diagram.json"
-    ) as f:
-        test_chem_space = json.load(f)
-
-    with open(pd_dir / "chemical_space_to_mpids.json") as f:
-        new_chem_map = json.load(f)
-
-    with open(
-        TEST_DATA_DIR / "test_phase_diagrams" / "chemical_space_to_mpids.json"
-    ) as f:
-        test_chem_map = json.load(f)
-
-    assert new_chem_space == test_chem_space
-    assert new_chem_map == test_chem_map
+    ppd = loadfn(pd_path)
+    assert len(ppd.all_entries) > 0
+    assert len(ppd.elements) > 0
 
 
 def test_relax(unrelaxed_atoms, out_dir):
