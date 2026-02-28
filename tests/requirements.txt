@@ -1,4 +1,4 @@
 ase==3.27.0
-fairchem-core==2.14.0
-pandas==2.3.3
+fairchem-core==2.15.0
+pandas==3.0.1
 pymatgen==2025.10.7
