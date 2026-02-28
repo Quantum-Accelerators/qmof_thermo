@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
-import torch
 from ase.filters import FrechetCellFilter
 from ase.io import read, write
 from ase.optimize import BFGS
@@ -82,6 +81,8 @@ def relax_mof(
         - ``<label>.cif``: Final relaxed structure in CIF format
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
+    import torch
+
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
