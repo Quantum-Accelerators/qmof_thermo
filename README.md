@@ -12,7 +12,7 @@ This respository also includes scripts to reproduce key figures in the manuscrip
 
 ## Usage
 
-### Phase Diagram COnstruction
+### Phase Diagram Construction
 
 Construct and save the phase diagram from the reference data. An example is provided below.
 
