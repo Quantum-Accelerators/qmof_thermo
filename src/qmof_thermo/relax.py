@@ -15,11 +15,15 @@ from ase.filters import FrechetCellFilter
 from ase.io import read, write
 from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
+from fairchem.core.units.mlip_unit.api.inference import UMATask
 from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 
 if TYPE_CHECKING:
+    from typing import Literal
+
     from ase import Atoms
+    from ase.optimize.optimize import Optimizer
     from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
@@ -29,10 +33,11 @@ def relax_mof(
     atoms: Atoms,
     label: str = "output",
     model: str | Path = "uma-s-1p1",
-    uma_task_name: str | None = "odac",
+    uma_task_name: UMATask | None = UMATask.ODAC,
     fmax: float = 0.01,
     max_steps: int = 10000,
-    device: str | None = None,
+    optimizer: type[Optimizer] = BFGS,
+    device: Literal["cpu", "cuda"] | None = None,
     out_dir: Path | str = Path("data/relaxations"),
 ) -> tuple[Structure, float]:
     """
@@ -96,7 +101,7 @@ def relax_mof(
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
-    opt = BFGS(filter_atoms, trajectory=traj_path, logfile=log_path)  # type: ignore
+    opt = optimizer(filter_atoms, trajectory=traj_path, logfile=log_path)  # type: ignore
     opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
 
     final_forces = atoms.get_forces()
