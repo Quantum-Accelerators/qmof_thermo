@@ -132,7 +132,7 @@ def relax_mof(
         "final_fmax": final_fmax,
     }
     summary_path = out_dir / "results.json"
-    dumpfn(summary, f)
+    dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
     return final_struct, final_energy
