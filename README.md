@@ -61,9 +61,9 @@ Construct and save the phase diagram from the reference data. An example is prov
 ```python
 from qmof_thermo import setup_phase_diagrams
 
-structures_path = "/path/to/reference_thermo_structures.json"
-thermo_path = "/path/to/reference_thermo.json"
-output_dir = "phase_diagrams"  # path to store cached phase diagrams
+structures_path = "reference_thermo_structures.json"
+thermo_path = "reference_thermo.json"
+output_dir = "phase_diagrams"
 
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
