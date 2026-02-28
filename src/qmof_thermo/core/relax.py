@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
+import torch
 from ase.filters import FrechetCellFilter
 from ase.io import read, write
 from ase.optimize import BFGS
@@ -22,12 +23,12 @@ LOGGER = getLogger(__name__)
 
 def run_calc(
     atoms: Atoms,
-    label: None | str = None,
+    label: str = "output",
     model: str | Path = "uma-s-1p1",
     uma_task_name: str | None = "odac",
-    fmax: float = 0.03,
+    fmax: float = 0.01,
     max_steps: int = 10000,
-    device: str = "cuda",
+    device: str | None = None,
     out_dir: Path | str = Path("data/relaxations"),
 ) -> tuple[Structure, float]:
     """
@@ -77,9 +78,7 @@ def run_calc(
         - ``<label>.cif``: Final relaxed structure in CIF format
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
-    if label is None:
-        label = "output"
-
+    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
         task_name=uma_task_name if "uma" in str(model) else None,

@@ -16,13 +16,17 @@ The following script allows users to relax a CIF file using an MLIP, as well as 
 
 ```python
 from ase.io import read
+from qmof_thermo import set_log_level
 from qmof_thermo.core import calc, relax
 
+# Set logging level
+set_log_level(logging.INFO)
+
 # Load your structure
-atoms = read("data/inputs/qmof-XXXXX.cif")
+atoms = read("mof.cif")
 
 # Relax the structure and get energy
-struct, energy = relax.run_calc(atoms, label="qmof-XXXXX")
+struct, energy = relax.run_calc(atoms, model="uma-s-1p1", label="mymof")
 
 # Path to directory containing PhaseDiagram JSON files
 pd_dir = "phase_diagrams"
