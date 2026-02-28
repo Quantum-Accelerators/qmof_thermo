@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import torch
 from ase.filters import FrechetCellFilter
-from ase.io import read, write
+from ase.io import write
 from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
@@ -36,7 +36,7 @@ def relax_mof(
     optimizer: type[Optimizer] = BFGS,
     device: Literal["cpu", "cuda"] | None = None,
     out_dir: Path | str = Path("data/relaxations"),
-) -> tuple[Atoms, float]:
+) -> float:
     """
     Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
 
@@ -72,9 +72,8 @@ def relax_mof(
 
     Returns
     -------
-    tuple[Atoms, float]
-        - The final relaxed structure as an ASE Atoms object.
-        - The final relaxed total energy in eV.
+    float
+        The final relaxed total energy in eV.
 
     Notes
     -----
@@ -112,9 +111,8 @@ def relax_mof(
         f"Energy: {final_energy}, Volume: {final_volume}, fmax: {final_fmax}, steps: {nsteps}"
     )
 
-    final_atoms = read(traj_path, index=-1)
     cif_path = out_dir / f"{label}.cif"
-    write(cif_path, final_atoms)
+    write(cif_path, atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
 
     summary = {
@@ -131,4 +129,4 @@ def relax_mof(
     dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
-    return final_atoms, final_energy
+    return final_energy
