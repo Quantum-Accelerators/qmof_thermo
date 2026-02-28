@@ -55,7 +55,17 @@ def test_relax(unrelaxed_atoms, out_dir):
     assert energy == pytest.approx(-1191.972703923097)
 
 
+def test_energy_above_hull_default(relaxed_structure):
+    energy = -1191.972703923097
+    e_above_hull = get_energy_above_hull(relaxed_structure, energy)
+    assert e_above_hull == pytest.approx(0.1921294352092806)
+
+
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
-    e_above_hull = get_energy_above_hull(relaxed_structure, energy, pd_dir)
+    e_above_hull = get_energy_above_hull(
+        relaxed_structure,
+        energy,
+        serialized_phase_diagram=pd_dir / _DEFAULT_PD_FILENAME,
+    )
     assert e_above_hull == pytest.approx(0.1921294352092806)
