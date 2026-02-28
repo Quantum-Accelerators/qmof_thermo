@@ -1,3 +1,7 @@
+"""
+Module for relaxations.
+"""
+
 from __future__ import annotations
 
 import json
@@ -20,14 +24,14 @@ if TYPE_CHECKING:
 LOGGER = getLogger(__name__)
 
 
-def run_calc(
+def relax_mof(
     atoms: Atoms,
-    label: None | str = None,
+    label: str = "output",
     model: str | Path = "uma-s-1p1",
     uma_task_name: str | None = "odac",
-    fmax: float = 0.03,
+    fmax: float = 0.01,
     max_steps: int = 10000,
-    device: str = "cuda",
+    device: str | None = None,
     out_dir: Path | str = Path("data/relaxations"),
 ) -> tuple[Structure, float]:
     """
@@ -77,9 +81,9 @@ def run_calc(
         - ``<label>.cif``: Final relaxed structure in CIF format
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
-    if label is None:
-        label = "output"
+    import torch
 
+    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
         task_name=uma_task_name if "uma" in str(model) else None,
@@ -88,7 +92,7 @@ def run_calc(
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = Path(out_dir) / label
+    out_dir = (Path(out_dir) / label).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"

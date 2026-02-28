@@ -7,7 +7,7 @@ import pytest
 from ase.io import read
 from pymatgen.core import Structure
 
-from qmof_thermo.core import calc, relax, setup_pd
+from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -37,7 +37,7 @@ def unrelaxed_atoms():
 def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
-    setup_pd.setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
+    setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
 
     with open(pd_dir / "('C', 'H', 'N', 'O', 'Zn')_phase_diagram.json") as f:
         new_chem_space = json.load(f)
@@ -62,8 +62,8 @@ def test_make_phase_diagram(pd_dir):
 
 
 def test_relax(unrelaxed_atoms, out_dir):
-    struct, energy = relax.run_calc(
-        unrelaxed_atoms, label="qmof-bda2f7d", out_dir=out_dir, device="cpu"
+    struct, energy = relax_mof(
+        unrelaxed_atoms, label="qmof-bda2f7d", fmax=0.03, out_dir=out_dir
     )
     assert struct.volume == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
@@ -71,7 +71,5 @@ def test_relax(unrelaxed_atoms, out_dir):
 
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
-    e_above_hull = calc.energy_above_hull_from_structure(
-        relaxed_structure, energy, pd_dir
-    )
+    e_above_hull = get_energy_above_hull(relaxed_structure, energy, pd_dir)
     assert e_above_hull == pytest.approx(0.1921294352092806)

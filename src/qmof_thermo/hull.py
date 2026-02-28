@@ -1,4 +1,6 @@
-# src/qmof_thermo/core/e_above_hull.py
+"""
+Module for calculating energy above hull.
+"""
 
 from __future__ import annotations
 
@@ -72,7 +74,7 @@ def _load_phase_diagram_for_space(
     if not mapping_path.is_file():
         raise FileNotFoundError(
             f"Could not find mapping file at {mapping_path}. "
-            "Run setup_pd.py to build the reference phase diagrams."
+            "Run `qmof_thermo.phase_diagram.setup_phase_diagrams` to build the reference phase diagrams."
         )
 
     with mapping_path.open() as f:
@@ -91,17 +93,17 @@ def _load_phase_diagram_for_space(
     if not pd_path.is_file():
         raise FileNotFoundError(
             f"PhaseDiagram JSON for space {space} not found at {pd_path}. "
-            "Make sure setup_pd.py finished successfully."
+            "Make sure `qmof_thermo.phase_diagram.setup_phase_diagrams` finished successfully."
         )
 
     pd_obj: PhaseDiagram = loadfn(pd_path)
     return pd_obj
 
 
-def energy_above_hull_from_structure(
+def get_energy_above_hull(
     struct: Structure | Atoms,
     energy: float,
-    references_dir: Path | str = "data/references",
+    references_dir: Path | str = Path("data/references"),
 ) -> float:
     """
     Calculate the energy above hull for a structure with a given total energy.
