@@ -16,23 +16,22 @@ The following script allows users to relax a CIF file using an MLIP, as well as 
 
 ```python
 from ase.io import read
-from qmof_thermo import set_log_level
-from qmof_thermo.core import calc, relax
+from qmof_thermo import set_log_level, relax_mof, get_energy_above_hull
 
 # Set logging level
-set_log_level(logging.INFO)
+set_log_level("INFO")
 
 # Load your structure
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-struct, energy = relax.run_calc(atoms, model="uma-s-1p1", label="mymof")
+struct, energy = relax_mof(atoms, model="uma-s-1p1", label="mymof")
 
 # Path to directory containing PhaseDiagram JSON files
 pd_dir = "phase_diagrams"
 
 # Calculate energy above hull
-e_above_hull = calc.energy_above_hull_from_structure(struct, energy, pd_dir)
+e_above_hull = get_energy_above_hull(struct, energy, pd_dir)
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
@@ -60,7 +59,7 @@ Place the following files anywhere within an accessible directory:
 Construct and save the phase diagram from the reference data. An example is provided below.
 
 ```python
-from qmof_thermo.core.phase_diagram import setup_phase_diagrams
+from qmof_thermo import setup_phase_diagrams
 
 structures_path = "/path/to/reference_thermo_structures.json"
 thermo_path = "/path/to/reference_thermo.json"

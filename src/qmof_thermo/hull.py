@@ -1,4 +1,6 @@
-# src/qmof_thermo/core/e_above_hull.py
+"""
+Module for calculating energy above hull.
+"""
 
 from __future__ import annotations
 
@@ -13,6 +15,42 @@ from pymatgen.io.ase import AseAtomsAdaptor
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
+
+
+def get_energy_above_hull(
+    struct: Structure | Atoms,
+    energy: float,
+    references_dir: Path | str = Path("data/references"),
+) -> float:
+    """
+    Calculate the energy above hull for a structure with a given total energy.
+
+    Parameters
+    ----------
+    struct
+        Input structure as either a pymatgen Structure or ASE Atoms object.
+        If an Atoms object is provided, it will be converted to a Structure.
+    energy
+        Total relaxed energy of the structure in eV.
+    references_dir
+        Path to the directory containing precomputed phase diagram
+        references. Default is ``"data/references"``.
+
+    Returns
+    -------
+    float
+        Energy above the convex hull in eV/atom.
+    """
+    if isinstance(struct, Atoms):
+        struct = AseAtomsAdaptor.get_structure(struct)
+
+    space = _chemical_space_from_structure(struct)
+    pd_obj = _load_phase_diagram_for_space(space, references_dir)
+
+    entry = PDEntry(struct.composition, energy)
+    _, ehull = pd_obj.get_decomp_and_e_above_hull(entry)
+
+    return float(ehull)
 
 
 def _chemical_space_from_structure(struct: Structure) -> tuple[str, ...]:
@@ -72,7 +110,7 @@ def _load_phase_diagram_for_space(
     if not mapping_path.is_file():
         raise FileNotFoundError(
             f"Could not find mapping file at {mapping_path}. "
-            "Run `qmof_thermo.core.phase_diagram.setup_phase_diagrams` to build the reference phase diagrams."
+            "Run `qmof_thermo.phase_diagram.setup_phase_diagrams` to build the reference phase diagrams."
         )
 
     with mapping_path.open() as f:
@@ -91,44 +129,8 @@ def _load_phase_diagram_for_space(
     if not pd_path.is_file():
         raise FileNotFoundError(
             f"PhaseDiagram JSON for space {space} not found at {pd_path}. "
-            "Make sure `qmof_thermo.core.phase_diagram.setup_phase_diagrams` finished successfully."
+            "Make sure `qmof_thermo.phase_diagram.setup_phase_diagrams` finished successfully."
         )
 
     pd_obj: PhaseDiagram = loadfn(pd_path)
     return pd_obj
-
-
-def energy_above_hull_from_structure(
-    struct: Structure | Atoms,
-    energy: float,
-    references_dir: Path | str = "data/references",
-) -> float:
-    """
-    Calculate the energy above hull for a structure with a given total energy.
-
-    Parameters
-    ----------
-    struct
-        Input structure as either a pymatgen Structure or ASE Atoms object.
-        If an Atoms object is provided, it will be converted to a Structure.
-    energy
-        Total relaxed energy of the structure in eV.
-    references_dir
-        Path to the directory containing precomputed phase diagram
-        references. Default is ``"data/references"``.
-
-    Returns
-    -------
-    float
-        Energy above the convex hull in eV/atom.
-    """
-    if isinstance(struct, Atoms):
-        struct = AseAtomsAdaptor.get_structure(struct)
-
-    space = _chemical_space_from_structure(struct)
-    pd_obj = _load_phase_diagram_for_space(space, references_dir)
-
-    entry = PDEntry(struct.composition, energy)
-    _, ehull = pd_obj.get_decomp_and_e_above_hull(entry)
-
-    return float(ehull)

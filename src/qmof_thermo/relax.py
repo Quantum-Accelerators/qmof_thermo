@@ -1,3 +1,7 @@
+"""
+Module for relaxations.
+"""
+
 from __future__ import annotations
 
 import json
@@ -21,7 +25,7 @@ if TYPE_CHECKING:
 LOGGER = getLogger(__name__)
 
 
-def run_calc(
+def relax_mof(
     atoms: Atoms,
     label: str = "output",
     model: str | Path = "uma-s-1p1",
@@ -87,7 +91,7 @@ def run_calc(
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = Path(out_dir) / label
+    out_dir = (Path(out_dir) / label).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
