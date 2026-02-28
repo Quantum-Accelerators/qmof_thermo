@@ -292,6 +292,86 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
     LOGGER.info(f"\nSaved chemical space to MPIDs mapping to: {mapping_path}")
 
 
+def setup_phase_diagram_for_space(
+    chemical_space: set[str] | tuple[str, ...] | list[str],
+    structures_path: str | Path,
+    thermo_path: str | Path,
+    output_dir: str | Path,
+    id_key: str = "mpid",
+    energy_key: str = "energy_total",
+    ehull_key: str = "energy_above_hull",
+) -> None:
+    """
+    Build and save a PhaseDiagram for a specific chemical space.
+
+    Collects all hull entries whose elements are a subset of the given space,
+    then constructs and saves the phase diagram. Updates the mapping file.
+
+    Parameters
+    ----------
+    chemical_space
+        Elements defining the space, e.g. ('C', 'H', 'O', 'Zn').
+    structures_path
+        Path to JSON file containing structure records.
+    thermo_path
+        Path to JSON file containing thermo data.
+    output_dir
+        Directory for output files.
+    id_key
+        Column/key name for the material ID.
+    energy_key
+        Column name for total energy (eV).
+    ehull_key
+        Column name for energy above hull (eV).
+    """
+    structures_path = Path(structures_path)
+    thermo_path = Path(thermo_path)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    space = set(chemical_space)
+    space_tuple = tuple(sorted(space))
+
+    hull_entries = _load_hull_entries(
+        structures_path, thermo_path, id_key, energy_key, ehull_key
+    )
+
+    entries_for_space = []
+    mpids_for_space = []
+    for e in hull_entries:
+        if e.elements.issubset(space):
+            entries_for_space.append(PDEntry(e.structure.composition, e.energy))
+            mpids_for_space.append(e.mpid)
+
+    elemental_refs_present = set()
+    for pd_entry in entries_for_space:
+        comp = pd_entry.composition
+        if len(comp.elements) == 1:
+            elemental_refs_present.add(str(comp.elements[0].symbol))
+
+    missing = [el for el in space if el not in elemental_refs_present]
+    if missing:
+        raise ValueError(
+            f"Cannot build phase diagram for {space_tuple}: "
+            f"missing elemental references for {missing}"
+        )
+
+    pd = PhaseDiagram(entries_for_space)
+
+    filename = f"{space_tuple}_phase_diagram.json"
+    dumpfn(pd, output_dir / filename)
+    LOGGER.info(f"Saved PhaseDiagram for {space_tuple} to {output_dir / filename}")
+
+    mapping_path = output_dir / "chemical_space_to_mpids.json"
+    mapping: dict[str, list[str]] = {}
+    if mapping_path.is_file():
+        with mapping_path.open() as f:
+            mapping = json.load(f)
+    mapping[str(space_tuple)] = sorted(set(mpids_for_space))
+    with mapping_path.open("w") as f:
+        json.dump(mapping, f, indent=2)
+
+
 def setup_phase_diagrams(
     structures_path: str | Path,
     thermo_path: str | Path,

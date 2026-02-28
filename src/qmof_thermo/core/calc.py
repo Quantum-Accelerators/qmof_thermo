@@ -80,10 +80,18 @@ def _load_phase_diagram_for_space(
 
     key = str(space)  # e.g. "('Ba', 'O', 'V')"
     if key not in space_mapping:
-        raise ValueError(
-            f"No phase diagram found for chemical space {space}. "
-            f"Known spaces: {len(space_mapping)}"
-        )
+        # Exact space not found; fall back to a superset space
+        space_set = set(space)
+        for candidate_key in space_mapping:
+            if all(f"'{el}'" in candidate_key for el in space_set):
+                key = candidate_key
+                break
+        else:
+            raise ValueError(
+                f"No phase diagram found for chemical space {space} "
+                f"or any superset. Known spaces: {len(space_mapping)}"
+                f"Try running setup_pd.setup_phase_diagram_for_space to build the specifc reference phase diagram for chemical space {space}."
+            )
 
     pd_filename = f"{key}_phase_diagram.json"
     pd_path = pd_dir / pd_filename
