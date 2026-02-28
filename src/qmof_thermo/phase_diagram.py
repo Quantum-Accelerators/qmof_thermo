@@ -179,7 +179,7 @@ def _load_hull_entries(
         all_entries.append(HullEntry(mpid, struct, energy, elements))
         used_count += 1
 
-    LOGGER.info(f"\nTotal hull entries with both energy and structure: {used_count}\n")
+    LOGGER.info(f"Total hull entries with both energy and structure: {used_count}")
 
     return all_entries
 
