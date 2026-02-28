@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import torch
 from ase.filters import FrechetCellFilter
-from ase.io import read, write
+from ase.io import write
 from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
