@@ -43,7 +43,7 @@ atoms = read("mof.cif")
 # Relax the structure and get energy
 struct, energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof")
 
-# Path to directory containing PhaseDiagram JSON files
+# Path to directory containing serialized PatchedPhaseDiagram
 references_dir = "phase_diagrams"
 
 # Calculate energy above hull
