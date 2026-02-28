@@ -16,15 +16,12 @@ from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
-from pymatgen.core import Structure
-from pymatgen.io.ase import AseAtomsAdaptor
 
 if TYPE_CHECKING:
     from typing import Literal
 
     from ase import Atoms
     from ase.optimize.optimize import Optimizer
-    from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
 

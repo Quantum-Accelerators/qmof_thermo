@@ -27,7 +27,9 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-optimized_atoms, energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof")
+optimized_atoms, energy = relax_mof(
+    atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof"
+)
 
 # Calculate energy above hull
 e_above_hull = get_energy_above_hull(optimized_atoms, energy)
