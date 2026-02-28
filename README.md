@@ -98,6 +98,7 @@ Scripts to reproduce the figures in the manuscript are also included in this rep
 
 ```bash
 git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
+cd qmof_thermo
 ```
 
 ### 2. Construct Figures
