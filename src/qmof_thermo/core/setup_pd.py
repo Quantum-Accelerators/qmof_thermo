@@ -7,10 +7,12 @@ from pathlib import Path
 
 import pandas as pd
 from monty.serialization import dumpfn
-from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram
+from pymatgen.analysis.phase_diagram import PatchedPhaseDiagram, PDEntry
 from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
+
+DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
 
 @dataclass
@@ -180,198 +182,6 @@ def _load_hull_entries(
     return all_entries
 
 
-def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -> None:
-    """
-    Build and save PhaseDiagrams for each unique chemical space.
-
-    For each unique chemical space (set of elements), construct a PhaseDiagram
-    using all hull entries whose element set is a subset of chemical space. Only
-    multi-element spaces are processed.
-
-    Parameters
-    ----------
-    entries
-        List of HullEntry objects containing structure, energy, and element data.
-    output_dir
-        Directory where phase diagram JSON files will be saved. Created if it
-        does not exist.
-
-    Returns
-    -------
-    None
-        Outputs are written to ``output_dir``:
-        - One ``{chemical_space}_phase_diagram.json`` per valid chemical space
-        - ``chemical_space_to_mpids.json`` mapping spaces to constituent material IDs
-
-    Notes
-    -----
-    A chemical space is skipped if:
-        - It contains only a single element
-        - It has fewer entries than the number of elements in the space
-        - It is missing pure elemental reference entries for any element
-        - PhaseDiagram construction fails
-    """
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # 1. All chemical spaces present (by element set)
-    all_spaces = {e.elements for e in entries}
-
-    # Keep only multi-element spaces for now
-    spaces = {s for s in all_spaces if len(s) > 1}
-
-    LOGGER.info(f"Total unique chemical spaces (multi-element): {len(spaces)}")
-
-    # 3. Build PhaseDiagram per chemical space
-    chemical_space_to_mpids: dict[str, list[str]] = {}
-
-    all_entries = entries
-
-    # start sorting through different chemical spaces
-    for i, space in enumerate(
-        sorted(spaces, key=lambda s: (len(s), sorted(s))), start=1
-    ):
-        space_tuple = tuple(sorted(space))
-        LOGGER.info(
-            f"Building PhaseDiagram for chemical space {space_tuple} "
-            f"({i}/{len(spaces)})..."
-        )
-
-        entries_for_space: list[PDEntry] = []
-        mpids_for_space: list[str] = []
-
-        # add entries/mpids to lists
-        for e in all_entries:
-            if e.elements.issubset(space):
-                entries_for_space.append(PDEntry(e.structure.composition, e.energy))
-                mpids_for_space.append(e.mpid)
-
-        if len(entries_for_space) < len(space):
-            # Not enough entries to possibly have all elemental references
-            LOGGER.info(
-                f"  Skipping {space_tuple}: only {len(entries_for_space)} entries, "
-                f"need at least {len(space)} for elemental refs."
-            )
-            continue
-
-        # Check we have pure element references for each element in the space
-        elemental_refs_present = set()
-        for pd_entry in entries_for_space:
-            comp = pd_entry.composition
-            if len(comp.elements) == 1:
-                elemental_refs_present.add(str(comp.elements[0].symbol))
-
-        missing_elements = [el for el in space if el not in elemental_refs_present]
-        if missing_elements:
-            LOGGER.debug(
-                f"  Skipping {space_tuple}: missing elemental references for "
-                f"{missing_elements}"
-            )
-            continue
-
-        # Try to build PhaseDiagram
-        try:
-            pd = PhaseDiagram(entries_for_space)
-        except Exception as exc:
-            LOGGER.info(f"  Error constructing PhaseDiagram for {space_tuple}: {exc}")
-            continue
-
-        # Save PD as JSON
-        filename = f"{space_tuple}_phase_diagram.json"
-        pd_path = output_dir / filename
-        dumpfn(pd, pd_path)
-        LOGGER.info(f"Saved PhaseDiagram to: {pd_path}")
-
-        # Store mapping for later use
-        chemical_space_to_mpids[str(space_tuple)] = sorted(set(mpids_for_space))
-
-    # Save chemical space → MPIDs mapping
-    mapping_path = output_dir / "chemical_space_to_mpids.json"
-    with mapping_path.open("w") as f:
-        json.dump(chemical_space_to_mpids, f, indent=2)
-    LOGGER.info(f"\nSaved chemical space to MPIDs mapping to: {mapping_path}")
-
-
-def setup_phase_diagram_for_space(
-    chemical_space: set[str] | tuple[str, ...] | list[str],
-    structures_path: str | Path,
-    thermo_path: str | Path,
-    output_dir: str | Path,
-    id_key: str = "mpid",
-    energy_key: str = "energy_total",
-    ehull_key: str = "energy_above_hull",
-) -> None:
-    """
-    Build and save a PhaseDiagram for a specific chemical space.
-
-    Collects all hull entries whose elements are a subset of the given space,
-    then constructs and saves the phase diagram. Updates the mapping file.
-
-    Parameters
-    ----------
-    chemical_space
-        Elements defining the space, e.g. ('C', 'H', 'O', 'Zn').
-    structures_path
-        Path to JSON file containing structure records.
-    thermo_path
-        Path to JSON file containing thermo data.
-    output_dir
-        Directory for output files.
-    id_key
-        Column/key name for the material ID.
-    energy_key
-        Column name for total energy (eV).
-    ehull_key
-        Column name for energy above hull (eV).
-    """
-    structures_path = Path(structures_path)
-    thermo_path = Path(thermo_path)
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    space = set(chemical_space)
-    space_tuple = tuple(sorted(space))
-
-    hull_entries = _load_hull_entries(
-        structures_path, thermo_path, id_key, energy_key, ehull_key
-    )
-
-    entries_for_space = []
-    mpids_for_space = []
-    for e in hull_entries:
-        if e.elements.issubset(space):
-            entries_for_space.append(PDEntry(e.structure.composition, e.energy))
-            mpids_for_space.append(e.mpid)
-
-    elemental_refs_present = set()
-    for pd_entry in entries_for_space:
-        comp = pd_entry.composition
-        if len(comp.elements) == 1:
-            elemental_refs_present.add(str(comp.elements[0].symbol))
-
-    missing = [el for el in space if el not in elemental_refs_present]
-    if missing:
-        raise ValueError(
-            f"Cannot build phase diagram for {space_tuple}: "
-            f"missing elemental references for {missing}"
-        )
-
-    pd = PhaseDiagram(entries_for_space)
-
-    filename = f"{space_tuple}_phase_diagram.json"
-    dumpfn(pd, output_dir / filename)
-    LOGGER.info(f"Saved PhaseDiagram for {space_tuple} to {output_dir / filename}")
-
-    mapping_path = output_dir / "chemical_space_to_mpids.json"
-    mapping: dict[str, list[str]] = {}
-    if mapping_path.is_file():
-        with mapping_path.open() as f:
-            mapping = json.load(f)
-    mapping[str(space_tuple)] = sorted(set(mpids_for_space))
-    with mapping_path.open("w") as f:
-        json.dump(mapping, f, indent=2)
-
-
 def setup_phase_diagrams(
     structures_path: str | Path,
     thermo_path: str | Path,
@@ -381,10 +191,12 @@ def setup_phase_diagrams(
     ehull_key: str = "energy_above_hull",
 ) -> None:
     """
-    Load reference hull data and construct phase diagrams for all chemical spaces.
+    Load reference hull data and construct a PatchedPhaseDiagram.
 
-    Main method to construct hull phase diagrams. Constructs seperate PhaseDiagram for each unique
-    chemical space present in data using only stable compounds (energy_above_hull = 0).
+    Builds a single PatchedPhaseDiagram from all stable compounds
+    (energy_above_hull = 0) and saves it to disk. The PatchedPhaseDiagram
+    internally partitions entries by chemical space for efficient
+    energy-above-hull queries.
 
     Parameters
     ----------
@@ -395,8 +207,8 @@ def setup_phase_diagrams(
         Path to a JSON file containing thermo data.
         Must include columns for ID, total energy, and energy above hull.
     output_dir : str | Path
-        Directory where phase diagram JSON files and the chemical-space-to-ID JSON
-        will be saved. Created if it does not exist.
+        Directory where the PatchedPhaseDiagram JSON file will be saved.
+        Created if it does not exist.
     id_key : str, default "mpid"
         Column/key name for the material ID in both data sources.
     energy_key : str, default "energy_total"
@@ -407,15 +219,27 @@ def setup_phase_diagrams(
     Returns
     -------
     None
-        Outputs are written to `output_dir`:
-        - One `{chemical_space}_phase_diagram.json` per valid chemical space
-        - `chemical_space_to_mpids.json` mapping spaces to constituent material IDs
+        Outputs ``patched_phase_diagram.json`` to ``output_dir``.
     """
     structures_path = Path(structures_path)
     thermo_path = Path(thermo_path)
     output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     hull_entries = _load_hull_entries(
         structures_path, thermo_path, id_key, energy_key, ehull_key
     )
-    _build_phase_diagrams_by_space(hull_entries, output_dir)
+
+    pd_entries = [PDEntry(e.structure.composition, e.energy) for e in hull_entries]
+
+    LOGGER.info(f"Building PatchedPhaseDiagram from {len(pd_entries)} entries...")
+    ppd = PatchedPhaseDiagram(pd_entries)
+    n_elements = len(ppd.elements) if ppd.elements else 0
+    LOGGER.info(
+        f"PatchedPhaseDiagram built with {n_elements} elements "
+        f"and {len(ppd)} chemical sub-spaces."
+    )
+
+    pd_path = output_dir / DEFAULT_PD_FILENAME
+    dumpfn(ppd, pd_path)
+    LOGGER.info(f"Saved PatchedPhaseDiagram to: {pd_path}")
