@@ -112,9 +112,8 @@ def relax_mof(
         f"Energy: {final_energy}, Volume: {final_volume}, fmax: {final_fmax}, steps: {nsteps}"
     )
 
-    final_atoms = read(traj_path, index=-1)
     cif_path = out_dir / f"{label}.cif"
-    write(cif_path, final_atoms)
+    write(cif_path, atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
 
     summary = {
@@ -131,4 +130,4 @@ def relax_mof(
     dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
-    return final_atoms, final_energy
+    return atoms, final_energy
