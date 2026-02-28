@@ -249,7 +249,7 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
         if len(entries_for_space) < len(space):
             # Not enough entries to possibly have all elemental references
             LOGGER.info(
-                f"  Skipping {space_tuple}: only {len(entries_for_space)} entries, "
+                f"Skipping {space_tuple}: only {len(entries_for_space)} entries, "
                 f"need at least {len(space)} for elemental refs."
             )
             continue
@@ -264,7 +264,7 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
         missing_elements = [el for el in space if el not in elemental_refs_present]
         if missing_elements:
             LOGGER.debug(
-                f"  Skipping {space_tuple}: missing elemental references for "
+                f"Skipping {space_tuple}: missing elemental references for "
                 f"{missing_elements}"
             )
             continue
@@ -273,7 +273,7 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
         try:
             pd = PhaseDiagram(entries_for_space)
         except Exception as exc:
-            LOGGER.info(f"  Error constructing PhaseDiagram for {space_tuple}: {exc}")
+            LOGGER.info(f"Error constructing PhaseDiagram for {space_tuple}: {exc}")
             continue
 
         # Save PD as JSON

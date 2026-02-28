@@ -15,14 +15,8 @@ This respository also includes scripts to reproduce key figures in the manuscrip
 The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
 
 ```python
-import logging
-
 from ase.io import read
-from qmof_thermo import set_log_level
 from qmof_thermo.core import calc, relax
-
-# Specify level of logging. Choose between INFO, WARNING, DEBUG
-set_log_level(logging.INFO)
 
 # Load your structure
 atoms = read("data/inputs/qmof-XXXXX.cif")
@@ -62,39 +56,36 @@ Place the following files anywhere within an accessible directory:
 Construct and save the phase diagram from the reference data. An example is provided below.
 
 ```python
-from qmof_thermo.core import setup_pd
+from qmof_thermo.core.phase_diagram import setup_phase_diagrams
 
 structures_path = "/path/to/reference_thermo_structures.json"
 thermo_path = "/path/to/reference_thermo.json"
 output_dir = "phase_diagrams" # path to store cached phase diagrams
 
-setup_pd.setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
+setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
 
-### 4. MLIP Relaxation Setup (Optional)
+### 4. MLIP Setup
 
-If you want to perform structure relaxation using MLIPs, additional setup is required. Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
+Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
 
-#### Using eSEN
-
-Place the eSEN model checkpoint file in the `models/` directory:
-
-```bash
-models/
-└── esen_checkpoint.pt
-```
-
-#### Using UMA
+#### Using UMA-ODAC
 
 You have two options:
 
-1. **Local checkpoint**: Place the UMA model checkpoint in the `models/` directory.
+1. **HuggingFace (recommended)**: Log in with your HuggingFace credentials to download the model automatically:
 
-2. **HuggingFace (recommended)**: Log in with your HuggingFace credentials to download the model automatically:
    ```bash
-   huggingface-cli login
+   hf auth login
    ```
+
    Enter your HuggingFace token when prompted.
+
+2. **Local checkpoint**: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
+
+#### Using eSEN-ODAC
+
+**Local checkpoint**: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
 
 ## Figure Reproducibility
 
@@ -104,10 +95,11 @@ Scripts to reproduce the figures in the manuscript are also included in this rep
 
 ```bash
 git clone https://github.com/Quantum-Accelerators/qmof_thermo.git
-cd qmof_thermo
 ```
 
 ### 2. Construct Figures
+
+Run the corresponding Python scripts:
 
 ```bash
 python figures/figure_<N>.py

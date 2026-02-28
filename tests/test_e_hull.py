@@ -7,7 +7,7 @@ import pytest
 from ase.io import read
 from pymatgen.core import Structure
 
-from qmof_thermo.core import calc, relax, setup_pd
+from qmof_thermo.core import calc, phase_diagram, relax
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -37,7 +37,7 @@ def unrelaxed_atoms():
 def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
-    setup_pd.setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
+    phase_diagram.setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
 
     with open(pd_dir / "('C', 'H', 'N', 'O', 'Zn')_phase_diagram.json") as f:
         new_chem_space = json.load(f)
