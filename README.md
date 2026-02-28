@@ -1,8 +1,10 @@
 # qmof-thermo
 
 A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of metal–organic frameworks (MOFs) using machine-learned interatomic potentials (MLIPs).
-
+patched_phase_diagram
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
+
+For the QMOF-Thermo Database, please refer to the data available on [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
 
 ## Overview
 
@@ -46,16 +48,7 @@ To obtain energy_above_hull calculations using DFT values from the qmof_thermo d
 pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
 ```
 
-### 2. Download the QMOF-Thermo Database
-
-Download the qmof-thermo database files from [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
-
-Place the following files anywhere within an accessible directory:
-
-- `reference_thermo_structures.json`
-- `reference_structures.json`
-
-### 3. MLIP Setup
+### 2. MLIP Setup
 
 Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
 
@@ -63,9 +56,9 @@ Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed i
 
 You have two options:
 
-1. **Local checkpoint**: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
+1. *Local checkpoint*: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
 
-2. **HuggingFace**: Log in with your HuggingFace credentials to download the model automatically:
+2. *HuggingFace*: Log in with your HuggingFace credentials to download the model automatically:
 
    ```bash
    hf auth login
@@ -75,18 +68,18 @@ You have two options:
 
 #### eSEN-ODAC
 
-**Local checkpoint**: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
+*Local checkpoint*: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
 
-### Advanced: Phase Diagram Reconstruction
+## Advanced: Phase Diagram Reconstruction
 
 While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do as follows:
 
 ```python
 from qmof_thermo import setup_phase_diagrams
 
-structures_path = "reference_thermo_structures.json"
-thermo_path = "reference_thermo.json"
-output_dir = "phase_diagrams"
+structures_path = "reference_thermo_structures.json" # from QMOF-Thermo figshare
+thermo_path = "reference_thermo.json" # from QMOF-Thermo figshare
+output_dir = "phase_diagrams" # directory to store patched_phase_diagram.json
 
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
