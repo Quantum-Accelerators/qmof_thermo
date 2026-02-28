@@ -77,9 +77,9 @@ While we provide the phase diagram data with the package, to re-construct it (e.
 ```python
 from qmof_thermo import setup_phase_diagrams
 
-structures_path = "reference_thermo_structures.json" # from QMOF-Thermo figshare
-thermo_path = "reference_thermo.json" # from QMOF-Thermo figshare
-output_dir = "phase_diagrams" # directory to store patched_phase_diagram.json
+structures_path = "reference_thermo_structures.json"  # from QMOF-Thermo figshare
+thermo_path = "reference_thermo.json"  # from QMOF-Thermo figshare
+output_dir = "phase_diagrams"  # directory to store patched_phase_diagram.json
 
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
