@@ -2,7 +2,7 @@
 
 A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of metal–organic frameworks (MOFs) using machine-learned interatomic potentials (MLIPs).
 
-For the QMOF-Thermo Database, please refer to the data available on [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
+Note: For the QMOF-Thermo Database, please refer to the data available on [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
 
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
 
@@ -77,9 +77,9 @@ While we provide the phase diagram data with the package, to re-construct it (e.
 ```python
 from qmof_thermo import setup_phase_diagrams
 
-structures_path = "reference_thermo_structures.json" # from QMOF-Thermo figshare
-thermo_path = "reference_thermo.json" # from QMOF-Thermo figshare
-output_dir = "phase_diagrams" # directory to store patched_phase_diagram.json
+structures_path = "reference_thermo_structures.json"  # from QMOF-Thermo figshare
+thermo_path = "reference_thermo.json"  # from QMOF-Thermo figshare
+output_dir = "phase_diagrams"  # directory to store patched_phase_diagram.json
 
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
