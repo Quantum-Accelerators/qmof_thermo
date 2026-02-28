@@ -12,6 +12,22 @@ This respository also includes scripts to reproduce key figures in the manuscrip
 
 ## Usage
 
+### Phase Diagram COnstruction
+
+Construct and save the phase diagram from the reference data. An example is provided below.
+
+```python
+from qmof_thermo import setup_phase_diagrams
+
+structures_path = "reference_thermo_structures.json"
+thermo_path = "reference_thermo.json"
+output_dir = "phase_diagrams"
+
+setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
+```
+
+### Energy Above Hull Calculation
+
 The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
 
 ```python
@@ -54,25 +70,11 @@ Place the following files anywhere within an accessible directory:
 - `reference_thermo_structures.json`
 - `reference_structures.json`
 
-### 3. Initialize the Phase Diagram
-
-Construct and save the phase diagram from the reference data. An example is provided below.
-
-```python
-from qmof_thermo import setup_phase_diagrams
-
-structures_path = "reference_thermo_structures.json"
-thermo_path = "reference_thermo.json"
-output_dir = "phase_diagrams"
-
-setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
-```
-
-### 4. MLIP Setup
+### 3. MLIP Setup
 
 Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
 
-#### Using UMA-ODAC
+#### UMA-ODAC
 
 You have two options:
 
@@ -86,7 +88,7 @@ You have two options:
 
 2. **Local checkpoint**: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
 
-#### Using eSEN-ODAC
+#### eSEN-ODAC
 
 **Local checkpoint**: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
 
