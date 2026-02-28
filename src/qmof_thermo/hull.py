@@ -43,7 +43,7 @@ def _load_patched_phase_diagram(pd_dir: Path | str) -> PatchedPhaseDiagram:
     if not pd_path.is_file():
         raise FileNotFoundError(
             f"PatchedPhaseDiagram not found at {pd_path}. "
-            "Run setup_pd.setup_phase_diagrams() to build it first."
+            "Run qmof_thermo.setup_phase_diagrams() to build it first."
         )
 
     return loadfn(pd_path)
