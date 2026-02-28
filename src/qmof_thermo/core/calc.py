@@ -72,7 +72,7 @@ def _load_phase_diagram_for_space(
     if not mapping_path.is_file():
         raise FileNotFoundError(
             f"Could not find mapping file at {mapping_path}. "
-            "Run phase_diagram.py to build the reference phase diagrams."
+            "Run `qmof_thermo.core.phase_diagram.setup_phase_diagrams` to build the reference phase diagrams."
         )
 
     with mapping_path.open() as f:
@@ -91,7 +91,7 @@ def _load_phase_diagram_for_space(
     if not pd_path.is_file():
         raise FileNotFoundError(
             f"PhaseDiagram JSON for space {space} not found at {pd_path}. "
-            "Make sure phase_diagram.py finished successfully."
+            "Make sure `qmof_thermo.core.phase_diagram.setup_phase_diagrams` finished successfully."
         )
 
     pd_obj: PhaseDiagram = loadfn(pd_path)
