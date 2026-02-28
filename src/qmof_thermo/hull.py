@@ -21,7 +21,7 @@ _DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 
 def get_energy_above_hull(
-    struct: Atoms | Structure,
+    struct: Structure | Atoms,
     energy: float,
     serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
 ) -> float:
@@ -44,8 +44,8 @@ def get_energy_above_hull(
     float
         Energy above the convex hull in eV/atom.
     """
-    if isinstance(atoms, Atoms):
-        struct = AseAtomsAdaptor.get_structure(atoms)
+    if isinstance(struct, Atoms):
+        struct = AseAtomsAdaptor.get_structure(struct)
 
     ppd = loadfn(serialized_phase_diagram)
 
