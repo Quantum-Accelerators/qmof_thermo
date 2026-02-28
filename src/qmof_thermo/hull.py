@@ -17,42 +17,6 @@ if TYPE_CHECKING:
     from pymatgen.core import Structure
 
 
-def get_energy_above_hull(
-    struct: Structure | Atoms,
-    energy: float,
-    references_dir: Path | str = Path("data/references"),
-) -> float:
-    """
-    Calculate the energy above hull for a structure with a given total energy.
-
-    Parameters
-    ----------
-    struct
-        Input structure as either a pymatgen Structure or ASE Atoms object.
-        If an Atoms object is provided, it will be converted to a Structure.
-    energy
-        Total relaxed energy of the structure in eV.
-    references_dir
-        Path to the directory containing precomputed phase diagram
-        references. Default is ``"data/references"``.
-
-    Returns
-    -------
-    float
-        Energy above the convex hull in eV/atom.
-    """
-    if isinstance(struct, Atoms):
-        struct = AseAtomsAdaptor.get_structure(struct)
-
-    space = _chemical_space_from_structure(struct)
-    pd_obj = _load_phase_diagram_for_space(space, references_dir)
-
-    entry = PDEntry(struct.composition, energy)
-    _, ehull = pd_obj.get_decomp_and_e_above_hull(entry)
-
-    return float(ehull)
-
-
 def _chemical_space_from_structure(struct: Structure) -> tuple[str, ...]:
     """
     Extract the chemical space from a structure as a sorted tuple of element symbols.
@@ -134,3 +98,39 @@ def _load_phase_diagram_for_space(
 
     pd_obj: PhaseDiagram = loadfn(pd_path)
     return pd_obj
+
+
+def get_energy_above_hull(
+    struct: Structure | Atoms,
+    energy: float,
+    references_dir: Path | str = Path("data/references"),
+) -> float:
+    """
+    Calculate the energy above hull for a structure with a given total energy.
+
+    Parameters
+    ----------
+    struct
+        Input structure as either a pymatgen Structure or ASE Atoms object.
+        If an Atoms object is provided, it will be converted to a Structure.
+    energy
+        Total relaxed energy of the structure in eV.
+    references_dir
+        Path to the directory containing precomputed phase diagram
+        references. Default is ``"data/references"``.
+
+    Returns
+    -------
+    float
+        Energy above the convex hull in eV/atom.
+    """
+    if isinstance(struct, Atoms):
+        struct = AseAtomsAdaptor.get_structure(struct)
+
+    space = _chemical_space_from_structure(struct)
+    pd_obj = _load_phase_diagram_for_space(space, references_dir)
+
+    entry = PDEntry(struct.composition, energy)
+    _, ehull = pd_obj.get_decomp_and_e_above_hull(entry)
+
+    return float(ehull)
