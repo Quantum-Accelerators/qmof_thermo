@@ -299,7 +299,7 @@ def _build_phase_diagrams_by_space(entries: list[HullEntry], output_dir: Path) -
 def setup_phase_diagrams(
     structures_path: str | Path,
     thermo_path: str | Path,
-    output_dir: str | Path = Path("phase_diagrams"),
+    output_dir: str | Path = Path("data/references"),
     id_key: str = "mpid",
     energy_key: str = "energy_total",
     ehull_key: str = "energy_above_hull",
