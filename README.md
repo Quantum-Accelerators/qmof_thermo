@@ -62,7 +62,7 @@ You have two options:
    hf auth login
    ```
 
-   Enter your HuggingFace token when prompted.
+   Enter your HuggingFace token when prompted. If using this method, do not include the `.pt` extension in the `model` keyword argument.
 
 #### eSEN-ODAC
 
