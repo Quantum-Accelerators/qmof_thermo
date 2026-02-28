@@ -98,13 +98,11 @@ def relax_mof(
 
     out_dir = (Path(out_dir) / label).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
     opt = optimizer(
         filter_atoms,  # type: ignore
         trajectory=traj_path,
-        logfile=log_path,
     )
     opt.run(fmax=fmax, steps=max_steps)
 
