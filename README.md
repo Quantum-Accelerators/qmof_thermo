@@ -12,20 +12,6 @@ This repository also includes scripts to reproduce key figures in the manuscript
 
 ## Usage
 
-### Phase Diagram Construction
-
-Construct and save the phase diagram from the reference data. An example is provided below.
-
-```python
-from qmof_thermo import setup_phase_diagrams
-
-structures_path = "reference_thermo_structures.json"
-thermo_path = "reference_thermo.json"
-output_dir = "phase_diagrams"
-
-setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
-```
-
 ### Energy Above Hull Calculation
 
 The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
@@ -41,13 +27,10 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-struct, energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof")
-
-# Path to directory containing serialized PatchedPhaseDiagram
-references_dir = "phase_diagrams"
+optimized_atoms, energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof")
 
 # Calculate energy above hull
-e_above_hull = get_energy_above_hull(struct, energy, references_dir=references_dir)
+e_above_hull = get_energy_above_hull(optimized_atoms, energy)
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
@@ -91,6 +74,22 @@ You have two options:
 #### eSEN-ODAC
 
 **Local checkpoint**: Download the [eSEN-ODAC model checkpoint](https://huggingface.co/facebook/ODAC25) directly.
+
+### Advanced: Phase Diagram Reconstruction
+
+While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do as follows:
+
+```python
+from qmof_thermo import setup_phase_diagrams
+
+structures_path = "reference_thermo_structures.json"
+thermo_path = "reference_thermo.json"
+output_dir = "phase_diagrams"
+
+setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
+```
+
+Then `get_energy_above_hull()` can be called with `references_dir=output_dir`
 
 ## Figure Reproducibility
 

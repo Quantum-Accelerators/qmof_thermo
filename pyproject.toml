@@ -25,7 +25,7 @@ dependencies = [
 dev = ["pytest>=7.4.0", "ruff>=0.0.285"]
 
 [tool.setuptools.package-data]
-qmof_thermo = ["py.typed"]
+qmof_thermo = ["py.typed", "*.json"]
 
 [tool.pyright]
 include = ["qmof_thermo"]

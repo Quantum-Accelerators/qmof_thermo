@@ -8,7 +8,7 @@ from monty.serialization import loadfn
 from pymatgen.core import Structure
 
 from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
-from qmof_thermo.phase_diagram import DEFAULT_PD_FILENAME
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -39,7 +39,7 @@ def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
     setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
-    pd_path = pd_dir / DEFAULT_PD_FILENAME
+    pd_path = pd_dir / _DEFAULT_PD_FILENAME
     assert pd_path.is_file()
 
     ppd = loadfn(pd_path)
