@@ -41,7 +41,7 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure and get energy
-struct, energy = relax_mof(atoms, model="uma-s-1p1", fmax=0.01, label="mymof")
+struct, energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.01, label="mymof")
 
 # Path to directory containing PhaseDiagram JSON files
 references_dir = "phase_diagrams"
@@ -78,15 +78,15 @@ Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed i
 
 You have two options:
 
-1. **HuggingFace (recommended)**: Log in with your HuggingFace credentials to download the model automatically:
+1. **Local checkpoint**: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
+
+2. **HuggingFace**: Log in with your HuggingFace credentials to download the model automatically:
 
    ```bash
    hf auth login
    ```
 
    Enter your HuggingFace token when prompted.
-
-2. **Local checkpoint**: Download the [UMA model checkpoint](https://huggingface.co/facebook/UMA) directly.
 
 #### eSEN-ODAC
 

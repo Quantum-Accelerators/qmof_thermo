@@ -4,7 +4,6 @@ Module for relaxations.
 
 from __future__ import annotations
 
-import json
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -16,6 +15,7 @@ from ase.io import read, write
 from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
+from monty.serialization import dumpfn
 from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 
@@ -98,13 +98,11 @@ def relax_mof(
 
     out_dir = (Path(out_dir) / label).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
     opt = optimizer(
         filter_atoms,  # type: ignore
         trajectory=traj_path,
-        logfile=log_path,
     )
     opt.run(fmax=fmax, steps=max_steps)
 
@@ -134,8 +132,7 @@ def relax_mof(
         "final_fmax": final_fmax,
     }
     summary_path = out_dir / "results.json"
-    with summary_path.open("w") as f:
-        json.dump(summary, f, indent=2)
+    dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
     return final_struct, final_energy
