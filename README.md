@@ -91,7 +91,7 @@ output_dir = "phase_diagrams"
 setup_phase_diagrams(structures_path, thermo_path, output_dir=output_dir)
 ```
 
-Then `get_energy_above_hull()` can be called with `references_dir=output_dir`
+The resulting `phase_diagrams/patched_phase_diagram.json` can then be passed to the `serialized_phase_diagram: str | Path` keyword argument of `qmof_thermo.get_energy_above_hull()`.
 
 ## Figure Reproducibility
 
