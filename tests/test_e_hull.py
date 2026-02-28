@@ -8,7 +8,7 @@ from monty.serialization import loadfn
 from pymatgen.core import Structure
 
 from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
-from qmof_thermo.phase_diagram import DEFAULT_PD_FILENAME
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -39,7 +39,7 @@ def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
     setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
-    pd_path = pd_dir / DEFAULT_PD_FILENAME
+    pd_path = pd_dir / _DEFAULT_PD_FILENAME
     assert pd_path.is_file()
 
     ppd = loadfn(pd_path)
@@ -51,11 +51,21 @@ def test_relax(unrelaxed_atoms, out_dir):
     struct, energy = relax_mof(
         unrelaxed_atoms, label="qmof-bda2f7d", fmax=0.03, out_dir=out_dir
     )
-    assert struct.volume == pytest.approx(5284.412604266308)
+    assert struct.get_volume() == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
+
+
+def test_energy_above_hull_default(relaxed_structure):
+    energy = -1191.972703923097
+    e_above_hull = get_energy_above_hull(relaxed_structure, energy)
+    assert e_above_hull == pytest.approx(0.1921294352092806)
 
 
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
-    e_above_hull = get_energy_above_hull(relaxed_structure, energy, pd_dir)
+    e_above_hull = get_energy_above_hull(
+        relaxed_structure,
+        energy,
+        serialized_phase_diagram=pd_dir / _DEFAULT_PD_FILENAME,
+    )
     assert e_above_hull == pytest.approx(0.1921294352092806)

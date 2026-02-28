@@ -16,7 +16,7 @@ from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
 
-DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
+_DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
 
 @dataclass
@@ -244,6 +244,6 @@ def setup_phase_diagrams(
         f"and {len(ppd)} chemical sub-spaces."
     )
 
-    pd_path = output_dir / DEFAULT_PD_FILENAME
+    pd_path = output_dir / _DEFAULT_PD_FILENAME
     dumpfn(ppd, pd_path)
     LOGGER.info(f"Saved PatchedPhaseDiagram to: {pd_path}")

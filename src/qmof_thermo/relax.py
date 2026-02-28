@@ -16,15 +16,12 @@ from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
-from pymatgen.core import Structure
-from pymatgen.io.ase import AseAtomsAdaptor
 
 if TYPE_CHECKING:
     from typing import Literal
 
     from ase import Atoms
     from ase.optimize.optimize import Optimizer
-    from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
 
@@ -39,7 +36,7 @@ def relax_mof(
     optimizer: type[Optimizer] = BFGS,
     device: Literal["cpu", "cuda"] | None = None,
     out_dir: Path | str = Path("data/relaxations"),
-) -> tuple[Structure, float]:
+) -> tuple[Atoms, float]:
     """
     Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
 
@@ -75,8 +72,8 @@ def relax_mof(
 
     Returns
     -------
-    tuple[Structure, float]
-        - The final relaxed structure as a pymatgen Structure object.
+    tuple[Atoms, float]
+        - The final relaxed structure as an ASE Atoms object.
         - The final relaxed total energy in eV.
 
     Notes
@@ -116,7 +113,6 @@ def relax_mof(
     )
 
     final_atoms = read(traj_path, index=-1)
-    final_struct = AseAtomsAdaptor.get_structure(final_atoms)  # type: ignore
     cif_path = out_dir / f"{label}.cif"
     write(cif_path, final_atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
@@ -135,4 +131,4 @@ def relax_mof(
     dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
-    return final_struct, final_energy
+    return final_atoms, final_energy

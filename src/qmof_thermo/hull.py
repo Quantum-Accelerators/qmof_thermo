@@ -9,50 +9,21 @@ from typing import TYPE_CHECKING
 
 from ase import Atoms
 from monty.serialization import loadfn
-from pymatgen.analysis.phase_diagram import PatchedPhaseDiagram, PDEntry
+from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo.phase_diagram import DEFAULT_PD_FILENAME
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
 
-
-def _load_patched_phase_diagram(pd_dir: Path | str) -> PatchedPhaseDiagram:
-    """
-    Load a precomputed PatchedPhaseDiagram from disk.
-
-    Parameters
-    ----------
-    pd_dir
-        Directory containing the ``patched_phase_diagram.json`` file.
-
-    Returns
-    -------
-    PatchedPhaseDiagram
-        The loaded PatchedPhaseDiagram object.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the PatchedPhaseDiagram JSON file cannot be found.
-    """
-    pd_dir = Path(pd_dir)
-    pd_path = pd_dir / DEFAULT_PD_FILENAME
-
-    if not pd_path.is_file():
-        raise FileNotFoundError(
-            f"PatchedPhaseDiagram not found at {pd_path}. "
-            "Run qmof_thermo.setup_phase_diagrams() to build it first."
-        )
-
-    return loadfn(pd_path)
+_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 
 def get_energy_above_hull(
     struct: Structure | Atoms,
     energy: float,
-    references_dir: Path | str = Path("data/references"),
+    serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
 ) -> float:
     """
     Calculate the energy above hull for a structure with a given total energy.
@@ -76,7 +47,7 @@ def get_energy_above_hull(
     if isinstance(struct, Atoms):
         struct = AseAtomsAdaptor.get_structure(struct)
 
-    ppd = _load_patched_phase_diagram(references_dir)
+    ppd = loadfn(serialized_phase_diagram)
 
     entry = PDEntry(struct.composition, energy)
     result = ppd.get_decomp_and_e_above_hull(entry)
