@@ -101,8 +101,12 @@ def relax_mof(
     log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
-    opt = optimizer(filter_atoms, trajectory=traj_path, logfile=log_path)  # type: ignore
-    opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
+    opt = optimizer(
+        filter_atoms,  # type: ignore
+        trajectory=traj_path,
+        logfile=log_path,
+    )
+    opt.run(fmax=fmax, steps=max_steps)
 
     final_forces = atoms.get_forces()
     final_fmax = float(np.max(np.linalg.norm(final_forces, axis=1)))
@@ -113,7 +117,7 @@ def relax_mof(
         f"Energy: {final_energy}, Volume: {final_volume}, fmax: {final_fmax}, steps: {nsteps}"
     )
 
-    final_atoms = read(traj_path, index=-1)  # last frame
+    final_atoms = read(traj_path, index=-1)
     final_struct = AseAtomsAdaptor.get_structure(final_atoms)  # type: ignore
     cif_path = out_dir / f"{label}.cif"
     write(cif_path, final_atoms)
