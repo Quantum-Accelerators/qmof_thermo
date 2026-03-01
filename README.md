@@ -38,8 +38,6 @@ print(f"Energy above hull: {e_above_hull} eV/atom")
 
 ## Setup Instructions
 
-To obtain energy_above_hull calculations using DFT values from the qmof_thermo database, users must utilize JSON files found in the qmof-thermo [Figshare](https://doi.org/10.6084/m9.figshare.13147324). All necessary steps are outlined below.
-
 ### 1. Install the Package
 
 ```bash
