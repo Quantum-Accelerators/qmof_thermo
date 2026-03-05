@@ -46,7 +46,7 @@ print(df["synthesizable"].value_counts())
 
 # Create 1x2 subplot grid
 # Width = 3.4 + 3.4 = 6.8, Height = max(2.5, 2.485) = 2.5
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.8, 2.5))
+fig, (ax2, ax1) = plt.subplots(1, 2, figsize=(6.8, 2.5))
 
 # ============== PLOT A: All MOFs (Synthesized + Unsynthesized) ==============
 color_map = {True: "#6495ED", False: "#FF6347"}
@@ -98,9 +98,9 @@ ax1.set_xlim([0, 46])
 ax1.set_ylim([0, 0.82])
 
 ax1.text(
-    -0.145,
+    -0.155,
     1.0,
-    "A",
+    "B",
     transform=ax1.transAxes,
     fontsize=11,
     fontweight="bold",
@@ -137,9 +137,9 @@ for spine in ax2.spines.values():
 # ax2.set_ylim([0, 0.82])
 
 ax2.text(
-    -0.145,
+    -0.185,
     1.0,
-    "B",
+    "A",
     transform=ax2.transAxes,
     fontsize=11,
     fontweight="bold",
