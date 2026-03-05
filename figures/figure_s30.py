@@ -19,7 +19,7 @@ df_syn = df[df['synthesizable'] == True][['formation_energy', 'ehull']].copy()
 df_syn['synthesizable'] = True
 
 # Load new hypothetical MOFs
-with gzip.open("Additional_Hypothetical_MOFs.json.gz", "rt") as f:
+with gzip.open("ARC_MOFs.json.gz", "rt") as f:
     data2 = json.load(f)
 
 df2 = (
@@ -106,7 +106,7 @@ for spine in ax2.spines.values():
 
 # Update legend labels
 handles, labels = ax2.get_legend_handles_labels()
-ax2.legend(handles, ['Syn QMOF', 'New Hypo'], 
+ax2.legend(handles, ['Syn QMOF', 'ARC-MOF'], 
            title='', fontsize=8,
            frameon=False, loc='upper right',
            bbox_to_anchor=([1.02, 1]))
