@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -8,7 +9,7 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PatchedPhaseDiagram, PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo.core.setup_pd import DEFAULT_PD_FILENAME
+from qmof_thermo.core.setup_pd import DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
@@ -73,6 +74,17 @@ def energy_above_hull_from_structure(
     """
     if isinstance(struct, Atoms):
         struct = AseAtomsAdaptor.get_structure(struct)
+
+    # Check for elements with mismatched pseudopotentials
+    mol_elements = {str(el) for el in struct.composition.elements}
+    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
+    if incompatible:
+        warnings.warn(
+            f"Structure contains elements whose UMA-ODAC default "
+            f"pseudopotentials do not match QMOF: {sorted(incompatible)}. "
+            f"Energy predictions will not be comparable to QMOF DFT references.",
+            stacklevel=2,
+        )
 
     ppd = _load_patched_phase_diagram(references_dir)
 

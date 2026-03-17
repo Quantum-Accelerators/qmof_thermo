@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -12,6 +13,8 @@ from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
 from pymatgen.core import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
+
+from qmof_thermo.core.setup_pd import QMOF_COMPATIBLE_ELEMENTS
 
 if TYPE_CHECKING:
     from ase import Atoms
@@ -79,6 +82,16 @@ def run_calc(
     """
     if label is None:
         label = "output"
+
+    mol_elements = set(atoms.get_chemical_symbols())
+    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
+    if incompatible:
+        warnings.warn(
+            f"Structure contains elements whose UMA-ODAC default "
+            f"pseudopotentials do not match QMOF: {sorted(incompatible)}. "
+            f"Energy predictions will not be comparable to QMOF DFT references.",
+            stacklevel=2,
+        )
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from dataclasses import dataclass
 from logging import getLogger
 from pathlib import Path
@@ -13,6 +14,26 @@ from pymatgen.core import Structure
 LOGGER = getLogger(__name__)
 
 DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
+
+UMA_ODAC_ELEMENTS = {
+    "H", "Li", "Be", "B", "C", "N", "O", "F", "Na", "Mg",
+    "Al", "Si", "P", "S", "Cl", "Ca", "Sc", "Ti", "V", "Cr",
+    "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se",
+    "Br", "Sr", "Y", "Zr", "Nb", "Mo", "Ru", "Rh", "Pd", "Ag",
+    "Cd", "Sn", "Sb", "Te", "I", "Cs", "Ba", "La", "Ce", "Pr",
+    "Nd", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Lu",
+    "Hf", "W", "Re", "Pt", "Au", "Hg", "Bi", "Th", "U", "Np",
+}
+
+# Elements where UMA-ODAC pseudopotential matches the QMOF pseudopotential
+QMOF_COMPATIBLE_ELEMENTS = {
+    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+    "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "Sc", "Ni", "Cu",
+    "Zn", "As", "Se", "Br", "Sr", "Y", "Zr", "Pd", "Ag", "Cd",
+    "Sb", "Te", "I", "Cs", "Ba", "La", "Ce", "Re", "Ir", "Pt",
+    "Au", "Hg", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U",
+    "Np", "Pu", "Am", "Cm", "Cf", "Fe", "Co", "Os", "Xe", "Kr",
+}
 
 @dataclass
 class HullEntry:
@@ -228,6 +249,21 @@ def setup_phase_diagrams(
     hull_entries = _load_hull_entries(
         structures_path, thermo_path, id_key, energy_key, ehull_key
     )
+
+    # Warn about elements not in UMA-ODAC or with mismatched pseudopotentials
+    all_elements = set()
+    for entry in hull_entries:
+        all_elements |= entry.elements
+
+    incompatible = all_elements - QMOF_COMPATIBLE_ELEMENTS
+    if incompatible:
+        warnings.warn(
+            f"Phase diagram contains elements with mismatched "
+            f"pseudopotentials between UMA-ODAC and QMOF: "
+            f"{sorted(incompatible)}. Energy references for these elements "
+            f"may not be directly comparable.",
+            stacklevel=2,
+        )
 
     pd_entries = [PDEntry(e.structure.composition, e.energy) for e in hull_entries]
 
