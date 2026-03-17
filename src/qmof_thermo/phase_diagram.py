@@ -263,20 +263,17 @@ def setup_phase_diagrams(
     unsupported = all_elements - UMA_ODAC_ELEMENTS
     if unsupported:
         warnings.warn(
-            f"Phase diagram contains elements not in UMA-ODAC training data: "
-            f"{sorted(unsupported)}. Predictions for structures containing "
-            f"these elements may be unreliable. "
-            f"See https://github.com/facebookresearch/fairchem/issues/1586",
+            "Phase diagram contains elements not in UMA-ODAC training data: "
+            f"{sorted(unsupported)}.",
             stacklevel=2,
         )
 
     incompatible = all_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
         warnings.warn(
-            f"Phase diagram contains elements with mismatched "
-            f"pseudopotentials between UMA-ODAC and QMOF: "
-            f"{sorted(incompatible)}. Energy references for these elements "
-            f"may not be directly comparable.",
+            "Structure contains elements whose UMA-ODAC "
+            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
+            "Energy predictions will not be comparable to QMOF DFT references.",
             stacklevel=2,
         )
 

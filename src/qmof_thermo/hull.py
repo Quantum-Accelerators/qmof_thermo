@@ -52,9 +52,9 @@ def get_energy_above_hull(
     incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
         warnings.warn(
-            f"Structure contains elements whose UMA-ODAC default "
-            f"pseudopotentials do not match QMOF: {sorted(incompatible)}. "
-            f"Energy predictions will not be comparable to QMOF DFT references.",
+            "Structure contains elements whose UMA-ODAC "
+            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
+            "Energy predictions will not be comparable to QMOF DFT references.",
             stacklevel=2,
         )
 
