@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qmof-hull"
-version = "0.1.0"
+version = "1.0.0"
 description = "Tiny helper package for energy-above-hull phase diagram construction"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -16,6 +16,7 @@ authors = [
 dependencies = [
   "ase>=3.26.0",
   "fairchem-core>=2.2.0",
+  "monty>=2026.2.18",
   "pymatgen>=2024.0.0",
   "pandas>=1.5",
 ]
@@ -24,7 +25,7 @@ dependencies = [
 dev = ["pytest>=7.4.0", "ruff>=0.0.285"]
 
 [tool.setuptools.package-data]
-qmof_thermo = ["py.typed"]
+qmof_thermo = ["py.typed", "*.json"]
 
 [tool.pyright]
 include = ["qmof_thermo"]
@@ -108,6 +109,10 @@ lint.ignore = [
   "PERF203",  # try-except-in-loop
   "RET505", # Unnecessary `elif` after `return`
   "PLC0415", # `import` should be at the top-level of a file
+  "T201", # print
+  "EXE002", #shebang
+  "RUF001", # greek letters
+  "RUF003", # hyphens
 ]
 src = ["src"]
 lint.unfixable = [

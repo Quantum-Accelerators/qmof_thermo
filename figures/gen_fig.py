@@ -22,7 +22,9 @@ def get_energy_columns(calc_type) -> tuple[str, str]:
         return "dft_norm_energy", "ml_norm_energy"
 
 
-def format_labels(calc_type, subset, model_type : str = "UMA-ODAC",) -> tuple[str, str, str, str]:
+def format_labels(
+    calc_type, subset, model_type: str = "UMA-ODAC"
+) -> tuple[str, str, str, str]:
     calc_label = "Total" if calc_type == "Total Energy" else calc_type
     model_label = model_type
     subset_label = "MP Reference" if subset == "MP_ref" else subset

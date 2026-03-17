@@ -7,8 +7,8 @@ from ase.io import read
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from qmof_thermo.core import calc, relax, setup_pd
-from qmof_thermo.core.setup_pd import DEFAULT_PD_FILENAME
+from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -27,7 +27,7 @@ def pd_dir(tmp_path_factory):
 @pytest.fixture
 def relaxed_structure():
     atoms = read(TEST_DATA_DIR / "qmof-bda2f7d_relaxed.cif")
-    return Structure.from_ase_atoms(atoms)
+    return Structure.from_ase_atoms(atoms)  # type: ignore
 
 
 @pytest.fixture
@@ -38,9 +38,8 @@ def unrelaxed_atoms():
 def test_make_phase_diagram(pd_dir):
     structures_path = TEST_DATA_DIR / "test_reference_thermo_structures.json"
     thermo_path = TEST_DATA_DIR / "test_reference_thermo.json"
-    setup_pd.setup_phase_diagrams(structures_path, thermo_path, pd_dir)
-
-    pd_path = pd_dir / DEFAULT_PD_FILENAME
+    setup_phase_diagrams(structures_path, thermo_path, output_dir=pd_dir)
+    pd_path = pd_dir / _DEFAULT_PD_FILENAME
     assert pd_path.is_file()
 
     ppd = loadfn(pd_path)
@@ -49,16 +48,24 @@ def test_make_phase_diagram(pd_dir):
 
 
 def test_relax(unrelaxed_atoms, out_dir):
-    struct, energy = relax.run_calc(
-        unrelaxed_atoms, label="qmof-bda2f7d", out_dir=out_dir, device="cpu"
-    )
-    assert struct.volume == pytest.approx(5284.412604266308)
+    atoms = unrelaxed_atoms.copy()
+    energy = relax_mof(atoms, label="qmof-bda2f7d", fmax=0.03, out_dir=out_dir)
+    assert atoms.get_volume() != unrelaxed_atoms.get_volume()
+    assert atoms.get_volume() == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
+
+
+def test_energy_above_hull_default(relaxed_structure):
+    energy = -1191.972703923097
+    e_above_hull = get_energy_above_hull(relaxed_structure, energy)
+    assert e_above_hull == pytest.approx(0.1921294352092806)
 
 
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
-    e_above_hull = calc.energy_above_hull_from_structure(
-        relaxed_structure, energy, pd_dir
+    e_above_hull = get_energy_above_hull(
+        relaxed_structure,
+        energy,
+        serialized_phase_diagram=pd_dir / _DEFAULT_PD_FILENAME,
     )
     assert e_above_hull == pytest.approx(0.1921294352092806)

@@ -1,3 +1,7 @@
+"""
+Set up phase diagrams.
+"""
+
 from __future__ import annotations
 
 import json
@@ -13,7 +17,7 @@ from pymatgen.core import Structure
 
 LOGGER = getLogger(__name__)
 
-DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
+_DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
 UMA_ODAC_ELEMENTS = {
     "H", "Li", "Be", "B", "C", "N", "O", "F", "Na", "Mg",
@@ -35,6 +39,7 @@ QMOF_COMPATIBLE_ELEMENTS = {
     "Np", "Pu", "Am", "Cm", "Cf", "Fe", "Co", "Os", "Xe", "Kr",
 }
 
+
 @dataclass
 class HullEntry:
     """
@@ -55,7 +60,7 @@ class HullEntry:
     mpid: str
     structure: Structure
     energy: float  # total energy (eV)
-    elements: frozenset[str]  # e.g. set ({"Ba", "O", "V"})
+    elements: frozenset[str]  # e.g. frozenset({"Ba", "O", "V"})
 
 
 def chemical_space_from_structure(struct: Structure) -> set[str]:
@@ -197,7 +202,7 @@ def _load_hull_entries(
         all_entries.append(HullEntry(mpid, struct, energy, elements))
         used_count += 1
 
-    LOGGER.info(f"\nTotal hull entries with both energy and structure: {used_count}\n")
+    LOGGER.info(f"Total hull entries with both energy and structure: {used_count}")
 
     return all_entries
 
@@ -205,7 +210,7 @@ def _load_hull_entries(
 def setup_phase_diagrams(
     structures_path: str | Path,
     thermo_path: str | Path,
-    output_dir: str | Path,
+    output_dir: str | Path = Path("data/references"),
     id_key: str = "mpid",
     energy_key: str = "energy_total",
     ehull_key: str = "energy_above_hull",
@@ -255,6 +260,16 @@ def setup_phase_diagrams(
     for entry in hull_entries:
         all_elements |= entry.elements
 
+    unsupported = all_elements - UMA_ODAC_ELEMENTS
+    if unsupported:
+        warnings.warn(
+            f"Phase diagram contains elements not in UMA-ODAC training data: "
+            f"{sorted(unsupported)}. Predictions for structures containing "
+            f"these elements may be unreliable. "
+            f"See https://github.com/facebookresearch/fairchem/issues/1586",
+            stacklevel=2,
+        )
+
     incompatible = all_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
         warnings.warn(
@@ -275,6 +290,6 @@ def setup_phase_diagrams(
         f"and {len(ppd)} chemical sub-spaces."
     )
 
-    pd_path = output_dir / DEFAULT_PD_FILENAME
+    pd_path = output_dir / _DEFAULT_PD_FILENAME
     dumpfn(ppd, pd_path)
     LOGGER.info(f"Saved PatchedPhaseDiagram to: {pd_path}")

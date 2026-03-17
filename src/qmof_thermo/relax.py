@@ -1,38 +1,45 @@
+"""
+Module for relaxations.
+"""
+
 from __future__ import annotations
 
-import json
 import warnings
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
+import torch
 from ase.filters import FrechetCellFilter
-from ase.io import read, write
+from ase.io import write
 from ase.optimize import BFGS
 from fairchem.core import FAIRChemCalculator
-from pymatgen.core import Structure
-from pymatgen.io.ase import AseAtomsAdaptor
+from fairchem.core.units.mlip_unit.api.inference import UMATask
+from monty.serialization import dumpfn
 
-from qmof_thermo.core.setup_pd import QMOF_COMPATIBLE_ELEMENTS
+from qmof_thermo.phase_diagram import QMOF_COMPATIBLE_ELEMENTS
 
 if TYPE_CHECKING:
+    from typing import Literal
+
     from ase import Atoms
-    from pymatgen.core import Structure
+    from ase.optimize.optimize import Optimizer
 
 LOGGER = getLogger(__name__)
 
 
-def run_calc(
+def relax_mof(
     atoms: Atoms,
-    label: None | str = None,
+    label: str = "output",
     model: str | Path = "uma-s-1p1",
-    uma_task_name: str | None = "odac",
-    fmax: float = 0.03,
+    uma_task_name: UMATask | None = UMATask.ODAC,
+    fmax: float = 0.01,
     max_steps: int = 10000,
-    device: str = "cuda",
+    optimizer: type[Optimizer] = BFGS,
+    device: Literal["cpu", "cuda"] | None = None,
     out_dir: Path | str = Path("data/relaxations"),
-) -> tuple[Structure, float]:
+) -> float:
     """
     Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
 
@@ -68,9 +75,8 @@ def run_calc(
 
     Returns
     -------
-    tuple[Structure, float]
-        - The final relaxed structure as a pymatgen Structure object.
-        - The final relaxed total energy in eV.
+    float
+        The final relaxed total energy in eV.
 
     Notes
     -----
@@ -80,8 +86,7 @@ def run_calc(
         - ``<label>.cif``: Final relaxed structure in CIF format
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
-    if label is None:
-        label = "output"
+    device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
     mol_elements = set(atoms.get_chemical_symbols())
     incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
@@ -95,19 +100,21 @@ def run_calc(
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
-        task_name=uma_task_name if "uma" in model else None,
+        task_name=uma_task_name if "uma" in str(model) else None,
         device=device,
     )
 
     filter_atoms = FrechetCellFilter(atoms)
 
-    out_dir = Path(out_dir) / label
+    out_dir = (Path(out_dir) / label).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
-    log_path = out_dir / "opt.log"
     traj_path = out_dir / "opt.traj"
 
-    opt = BFGS(filter_atoms, trajectory=traj_path, logfile=log_path)
-    opt.run(fmax=fmax, steps=max_steps)  # runs the optimization until max|F| <= fmax
+    opt = optimizer(
+        filter_atoms,  # type: ignore
+        trajectory=traj_path,
+    )
+    opt.run(fmax=fmax, steps=max_steps)
 
     final_forces = atoms.get_forces()
     final_fmax = float(np.max(np.linalg.norm(final_forces, axis=1)))
@@ -118,10 +125,8 @@ def run_calc(
         f"Energy: {final_energy}, Volume: {final_volume}, fmax: {final_fmax}, steps: {nsteps}"
     )
 
-    final_atoms = read(traj_path, index=-1)  # last frame
-    final_struct = AseAtomsAdaptor.get_structure(final_atoms)
     cif_path = out_dir / f"{label}.cif"
-    write(cif_path, final_atoms)
+    write(cif_path, atoms)
     LOGGER.info(f"Final relaxed structure written to: {cif_path}")
 
     summary = {
@@ -135,8 +140,7 @@ def run_calc(
         "final_fmax": final_fmax,
     }
     summary_path = out_dir / "results.json"
-    with summary_path.open("w") as f:
-        json.dump(summary, f, indent=2)
+    dumpfn(summary, summary_path)
     LOGGER.info(f"Summary written to: {summary_path}")
 
-    return final_struct, final_energy
+    return final_energy
