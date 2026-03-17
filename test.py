@@ -1,6 +1,10 @@
-from qmof_thermo.core import calc, setup_pd
-from pymatgen.core import Structure
+from __future__ import annotations
+
 import logging
+
+from pymatgen.core import Structure
+
+from qmof_thermo.core import calc, setup_pd
 
 logging.basicConfig(level=logging.DEBUG)
 

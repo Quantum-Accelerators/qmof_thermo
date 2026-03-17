@@ -13,7 +13,7 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo.phase_diagram import QMOF_COMPATIBLE_ELEMENTS, _DEFAULT_PD_FILENAME
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
