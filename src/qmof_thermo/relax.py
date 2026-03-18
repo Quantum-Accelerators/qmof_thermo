@@ -17,6 +17,8 @@ from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
 
+from qmof_thermo.phase_diagram import QMOF_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
+
 if TYPE_CHECKING:
     from typing import Literal
 
@@ -84,6 +86,24 @@ def relax_mof(
         - ``results.json``: Summary including energy, volume, forces, and steps
     """
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+
+    mol_elements = set(atoms.get_chemical_symbols())
+
+    unsupported = mol_elements - UMA_ODAC_ELEMENTS
+    if unsupported:
+        LOGGER.warning(
+            "Structure contains elements not in UMA-ODAC training data: "
+            f"{sorted(unsupported)}. Predictions for these elements may be unreliable."
+        )
+
+    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
+    if incompatible:
+        LOGGER.warning(
+            "Structure contains elements whose UMA-ODAC "
+            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
+            "Energy predictions will not be comparable to QMOF DFT references."
+        )
+
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
         task_name=uma_task_name if "uma" in str(model) else None,
