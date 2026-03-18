@@ -5,7 +5,6 @@ Set up phase diagrams.
 from __future__ import annotations
 
 import json
-import warnings
 from dataclasses import dataclass
 from logging import getLogger
 from pathlib import Path
@@ -379,19 +378,17 @@ def setup_phase_diagrams(
 
     unsupported = all_elements - UMA_ODAC_ELEMENTS
     if unsupported:
-        warnings.warn(
+        LOGGER.warning(
             "Phase diagram contains elements not in UMA-ODAC training data: "
             f"{sorted(unsupported)}.",
-            stacklevel=2,
         )
 
     incompatible = all_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
-        warnings.warn(
+        LOGGER.warning(
             "Structure contains elements whose UMA-ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
             "Energy predictions will not be comparable to QMOF DFT references.",
-            stacklevel=2,
         )
 
     pd_entries = [PDEntry(e.structure.composition, e.energy) for e in hull_entries]

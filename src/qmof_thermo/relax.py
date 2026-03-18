@@ -4,7 +4,6 @@ Module for relaxations.
 
 from __future__ import annotations
 
-import warnings
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -92,19 +91,17 @@ def relax_mof(
 
     unsupported = mol_elements - UMA_ODAC_ELEMENTS
     if unsupported:
-        warnings.warn(
+        LOGGER.warning(
             "Structure contains elements not in UMA-ODAC training data: "
             f"{sorted(unsupported)}. Predictions for these elements may be unreliable.",
-            stacklevel=2,
         )
 
     incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
-        warnings.warn(
+        LOGGER.warning(
             "Structure contains elements whose UMA-ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
             "Energy predictions will not be comparable to QMOF DFT references.",
-            stacklevel=2,
         )
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(

@@ -4,7 +4,7 @@ Module for calculating energy above hull.
 
 from __future__ import annotations
 
-import warnings
+from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -14,6 +14,8 @@ from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
 from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS
+
+LOGGER = getLogger(__name__)
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
@@ -51,11 +53,10 @@ def get_energy_above_hull(
     mol_elements = {str(el) for el in struct.composition.elements}
     incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
     if incompatible:
-        warnings.warn(
+        LOGGER.warning(
             "Structure contains elements whose UMA-ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
             "Energy predictions will not be comparable to QMOF DFT references.",
-            stacklevel=2,
         )
 
     ppd = loadfn(serialized_phase_diagram)
