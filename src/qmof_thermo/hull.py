@@ -56,7 +56,7 @@ def get_energy_above_hull(
         LOGGER.warning(
             "Structure contains elements whose UMA-ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-            "Energy predictions will not be comparable to QMOF DFT references.",
+            "Energy predictions will not be comparable to QMOF DFT references."
         )
 
     ppd = loadfn(serialized_phase_diagram)
