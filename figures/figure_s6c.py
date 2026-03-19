@@ -67,10 +67,10 @@ ax.tick_params(
 
 plt.grid(False)
 
-plt.xlim([-1.5, 0.25])
-plt.ylim([-1.5, 0.25])
+plt.xlim([-1.6, 0.4])
+plt.ylim([-1.6, 0.4])
 
-ticks = np.arange(-1.5, 0.25, 0.2)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
+ticks = np.arange(-1.6, 0.4, 0.4)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
 ax.set_xticks(ticks)
 ax.set_yticks(ticks)
 
