@@ -24,7 +24,7 @@ fig, ax = plt.subplots(figsize=(8, 7))
 plt.scatter(Ehull, Ghull, s=50, c="k", alpha=0.7)
 
 
-plt.plot([0.1, 0.6], [0.1, 0.6], linestyle="--", color="black", linewidth=2)
+plt.plot([0.1, 0.44], [0.1, 0.44], linestyle="--", color="black", linewidth=2)
 
 # Labels and styling
 plt.xlabel(r"Δ$E_{\mathrm{hull}}$ (eV/atom)", fontsize=22)
@@ -51,10 +51,10 @@ ax.tick_params(
 
 plt.grid(False)
 
-plt.xlim([0.1, 0.525])
-plt.ylim([0.1, 0.525])
+plt.xlim([0.1, 0.44])
+plt.ylim([0.1, 0.44])
 
-ticks = np.arange(0.1, 0.6, 0.1)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
+ticks = np.arange(0.1, 0.4, 0.1)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
 ax.set_xticks(ticks)
 ax.set_yticks(ticks)
 

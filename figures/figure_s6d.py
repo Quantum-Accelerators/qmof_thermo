@@ -6,7 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-temp = 773
+temp = 600
 
 # --- 1. Load the JSON data ---
 # Replace 'data.json' with the path to your file
@@ -67,10 +67,10 @@ ax.tick_params(
 
 plt.grid(False)
 
-plt.xlim([-1.5, 0.65])
-plt.ylim([-1.5, 0.65])
+plt.xlim([-1.6, 0.4])
+plt.ylim([-1.6, 0.4])
 
-ticks = np.arange(-1.5, 0.65, 0.4)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
+ticks = np.arange(-1.6, 0.4, 0.4)  # or 0.1 step: np.arange(0.1, 0.6, 0.1)
 ax.set_xticks(ticks)
 ax.set_yticks(ticks)
 
