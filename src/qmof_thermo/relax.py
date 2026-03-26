@@ -106,7 +106,7 @@ def relax_mof(
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
         name_or_path=model,
-        task_name=uma_task_name if "uma" in str(model) else None,
+        task_name=uma_task_name if "uma" in str(model).lower() else None,
         device=device,
     )
 
