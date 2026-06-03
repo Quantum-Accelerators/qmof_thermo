@@ -13,7 +13,11 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS, QMOF_ELEMENTS
+from qmof_thermo.phase_diagram import (
+    _DEFAULT_PD_FILENAME,
+    QMOF_COMPATIBLE_ELEMENTS,
+    QMOF_ELEMENTS,
+)
 
 LOGGER = getLogger(__name__)
 
