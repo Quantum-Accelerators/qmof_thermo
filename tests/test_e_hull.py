@@ -61,6 +61,14 @@ def test_energy_above_hull_default(relaxed_structure):
     assert e_above_hull == pytest.approx(0.1921294352092806)
 
 
+def test_energy_above_hull_dict(relaxed_structure):
+    energy = -1191.972703923097
+    thermo = get_energy_above_hull(relaxed_structure, energy, return_dict=True)
+    assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
+    assert isinstance(thermo["formation_energy"], float)
+    assert isinstance(thermo["decomposition_products"], dict)
+
+
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
     e_above_hull = get_energy_above_hull(
