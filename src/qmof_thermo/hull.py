@@ -31,8 +31,7 @@ def get_energy_above_hull(
     struct: Structure | Atoms,
     energy: float,
     serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
-    return_dict: bool = False,
-) -> float | dict[str, float | dict[str, float]]:
+) -> dict[str, float | dict[str, float]]:
     """
     Calculate the energy above hull for a structure with a given total energy.
 
@@ -46,15 +45,11 @@ def get_energy_above_hull(
     serialized_phase_diagram
         Path to the directory containing the precomputed PatchedPhaseDiagram.
         Default is the phase diagram bundled with the package.
-    return_dict
-        If True, return energy above hull, formation energy, and decomposition
-        products in a dictionary. If False, return only energy above hull.
 
     Returns
     -------
-    float or dict
-        Energy above the convex hull in eV/atom, or a dictionary of
-        thermodynamic results.
+    dict
+        A dictionary containing energy above the convex hull, formation energy, and decomposition products.
     """
 
     if isinstance(struct, Atoms):
@@ -73,8 +68,8 @@ def get_energy_above_hull(
     out_of_chemical_space = mol_elements - QMOF_ELEMENTS
     if out_of_chemical_space:
         LOGGER.warning(
-            "Structure contains elements not present in the QMOF chemical space: "
-            f"{sorted(out_of_chemical_space)}. Relaxations possibly are not be comparable to QMOF references."
+            "Structure contains elements that are not present in the QMOF chemical space: "
+            f"{sorted(out_of_chemical_space)}. Results may not be comparable to QMOF convex hull phase diagram."
         )
 
     ppd = loadfn(serialized_phase_diagram)
@@ -89,14 +84,11 @@ def get_energy_above_hull(
         )
         raise ValueError(msg)
 
-    if return_dict:
-        return {
-            "energy_above_hull": float(e_above_hull),
-            "formation_energy": float(ppd.get_form_energy_per_atom(entry)),
-            "decomposition_products": {
-                decomp_entry.composition.reduced_formula: float(amount)
-                for decomp_entry, amount in decomp.items()
-            },
-        }
-
-    return float(e_above_hull)
+    return {
+        "energy_above_hull": float(e_above_hull),
+        "formation_energy": float(ppd.get_form_energy_per_atom(entry)),
+        "decomposition_products": {
+            decomp_entry.composition.reduced_formula: float(amount)
+            for decomp_entry, amount in decomp.items()
+        },
+    }
