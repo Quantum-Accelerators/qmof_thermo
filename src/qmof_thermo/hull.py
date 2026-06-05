@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from ase import Atoms
 from monty.serialization import loadfn
@@ -27,11 +27,17 @@ if TYPE_CHECKING:
 _DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 
+class HullOutput(TypedDict):
+    energy_above_hull: float
+    formation_energy: float
+    decomposition_products: dict[str, float]
+
+
 def get_energy_above_hull(
     struct: Structure | Atoms,
     energy: float,
     serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
-) -> dict[str, float | dict[str, float]]:
+) -> HullOutput:
     """
     Calculate the energy above hull for a structure with a given total energy.
 
