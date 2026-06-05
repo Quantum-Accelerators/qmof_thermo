@@ -78,8 +78,9 @@ def test_warning_for_ooqmof_chem_space(caplog):
     atoms = Atoms("He", positions=[[0, 0, 0]], cell=[3, 3, 3], pbc=True)
     energy = -1.0
 
-    with caplog.at_level("WARNING"), pytest.raises(
-        ValueError, match=r"Unable to get decomposition"
+    with (
+        caplog.at_level("WARNING"),
+        pytest.raises(ValueError, match=r"Unable to get decomposition"),
     ):
         get_energy_above_hull(atoms, energy)
 
