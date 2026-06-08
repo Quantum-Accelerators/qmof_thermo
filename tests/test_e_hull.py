@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from ase import Atoms
 from ase.io import read
 from monty.serialization import loadfn
 from pymatgen.core import Structure
@@ -57,8 +58,10 @@ def test_relax(unrelaxed_atoms, out_dir):
 
 def test_energy_above_hull_default(relaxed_structure):
     energy = -1191.972703923097
-    e_above_hull = get_energy_above_hull(relaxed_structure, energy)
-    assert e_above_hull == pytest.approx(0.1921294352092806)
+    thermo = get_energy_above_hull(relaxed_structure, energy)
+    assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
+    assert isinstance(thermo["formation_energy"], float)
+    assert isinstance(thermo["decomposition_products"], dict)
 
 
 def test_energy_above_hull(relaxed_structure, pd_dir):
@@ -67,5 +70,18 @@ def test_energy_above_hull(relaxed_structure, pd_dir):
         relaxed_structure,
         energy,
         serialized_phase_diagram=pd_dir / _DEFAULT_PD_FILENAME,
-    )
+    )["energy_above_hull"]
     assert e_above_hull == pytest.approx(0.1921294352092806)
+
+
+def test_warning_for_ooqmof_chem_space(caplog):
+    atoms = Atoms("He", positions=[[0, 0, 0]], cell=[3, 3, 3], pbc=True)
+    energy = -1.0
+
+    with (
+        caplog.at_level("WARNING"),
+        pytest.raises(ValueError, match=r"Unable to get decomposition"),
+    ):
+        get_energy_above_hull(atoms, energy)
+
+    assert "elements that are not present in the QMOF chemical space" in caplog.text
