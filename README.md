@@ -68,7 +68,7 @@ _Local checkpoint_: Download the [eSEN-ODAC model checkpoint](https://huggingfac
 
 ## Advanced: Phase Diagram Reconstruction
 
-While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do as follows:
+While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do so as follows:
 
 ```python
 from qmof_thermo import setup_phase_diagrams
