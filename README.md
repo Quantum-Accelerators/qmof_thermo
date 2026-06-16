@@ -68,7 +68,7 @@ _Local checkpoint_: Download the [eSEN-ODAC model checkpoint](https://huggingfac
 
 ## Advanced: Phase Diagram Reconstruction
 
-While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do as follows:
+While we provide the phase diagram data with the package, to re-construct it (e.g. to add new phases), you can do so as follows:
 
 ```python
 from qmof_thermo import setup_phase_diagrams
@@ -103,11 +103,11 @@ python figures/figure_<N>.py
 
 ## FAQ
 
-1. Can I use DFT-computed energies for the MOFs with the `qmof_thermo` package? 
+1. Can I use DFT-computed energies for the MOFs with the `qmof_thermo` package?
 
-Certainly. Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly. 
+Certainly. Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly.
 
-2. Can I use a different MLIP with the `qmof_thermo` package? 
+2. Can I use a different MLIP with the `qmof_thermo` package?
 
 Not easily. You are likely better off constructing the convex hull phase diagram with Pymatgen on your own.
 
