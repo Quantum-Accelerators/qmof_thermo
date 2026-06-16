@@ -100,3 +100,15 @@ Run the corresponding Python scripts:
 ```bash
 python figures/figure_<N>.py
 ```
+
+## FAQ
+
+1. Can I use DFT-computed energies for the MOFs with the `qmof_thermo` package? 
+
+Certainly. Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly. 
+
+2. Can I use a different MLIP with the `qmof_thermo` package? 
+
+Not easily. You are likely better off constructing the convex hull phase diagram with Pymatgen on your own.
+
+It is critical that the energy for the MOFs and the structures that compose the convex hull are all at the same level of theory, including functional, pseudopotentials, and so on. If you make variations on the settings used (e.g. by using different DFT settings or MLIP), be aware of this fact. The DFT energies in our work are obtained using QMOF settings, which are at the PBE-D3(BJ) level of theory. This is the same as UMA-ODAC and eSEN-ODAC, after filtering out incompatible pseudopotentials between QMOF and ODAC. If you'd like to use a completely different MLIP, you will need to compute everything from scratch with that MLIP to ensure internal consistency.
