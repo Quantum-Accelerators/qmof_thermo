@@ -1,12 +1,12 @@
 # qmof-thermo
 
+<img width="887" height="444" alt="qmof_thermo" src="https://github.com/user-attachments/assets/b473f604-79ea-47c2-9bd4-0022d438d3e8" />
+
 A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of metal–organic frameworks (MOFs) using machine-learned interatomic potentials (MLIPs).
 
 Note: For the QMOF-Thermo Database, please refer to the data available on [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
 
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
-
-<img width="887" height="444" alt="qmof_thermo" src="https://github.com/user-attachments/assets/b473f604-79ea-47c2-9bd4-0022d438d3e8" />
 
 ## Overview
 
