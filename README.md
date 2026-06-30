@@ -6,6 +6,8 @@ Note: For the QMOF-Thermo Database, please refer to the data available on [Figsh
 
 Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
 
+<img width="887" height="444" alt="qmof_thermo" src="https://github.com/user-attachments/assets/b473f604-79ea-47c2-9bd4-0022d438d3e8" />
+
 ## Overview
 
 This package provides a streamlined workflow to calculate the formation energy and energy above hull for MOFs. In order to utilize the energy-above-hull calculation method, one must follow the **Setup Instructions** directions.
