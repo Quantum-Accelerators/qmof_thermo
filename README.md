@@ -1,6 +1,8 @@
 # qmof-thermo
 
-<img width="887" height="444" alt="qmof_thermo" src="https://github.com/user-attachments/assets/b473f604-79ea-47c2-9bd4-0022d438d3e8" />
+<p align="center">
+<img width="443" height="222" alt="qmof_thermo" src="https://github.com/user-attachments/assets/b473f604-79ea-47c2-9bd4-0022d438d3e8" />
+</p>
 
 A toolkit for calculating thermodynamic stability (i.e. formation energy, energy above hull) of metal–organic frameworks (MOFs) using machine-learned interatomic potentials (MLIPs).
 
