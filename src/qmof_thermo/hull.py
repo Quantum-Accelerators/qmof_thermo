@@ -35,8 +35,8 @@ class HullOutput(TypedDict):
 
 def get_energy_above_hull(
     struct: Structure | Atoms,
-    *,
     energy: float,
+    *,
     energy_type: Literal["DFT", "ODAC_MLIP"],
     serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
 ) -> HullOutput:
