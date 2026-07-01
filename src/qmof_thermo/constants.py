@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-UMA_ODAC_ELEMENTS = {
+UMA_ODAC_ELEMENTS: set[str] = {
     "H",
     "Li",
     "Be",
@@ -76,7 +76,7 @@ UMA_ODAC_ELEMENTS = {
 }
 
 # Elements where UMA-ODAC pseudopotential matches the QMOF pseudopotential
-QMOF_ODAC_COMPATIBLE_ELEMENTS = {
+QMOF_ODAC_COMPATIBLE_ELEMENTS: set[str] = {
     "H",
     "He",
     "Li",
@@ -140,7 +140,7 @@ QMOF_ODAC_COMPATIBLE_ELEMENTS = {
 }
 
 # List of elements from QMOF_Thermo Dataset
-QMOF_ELEMENTS = {
+QMOF_ELEMENTS: set[str] = {
     "H",
     "Li",
     "Be",
