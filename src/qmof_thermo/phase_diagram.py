@@ -14,7 +14,7 @@ from monty.serialization import dumpfn
 from pymatgen.analysis.phase_diagram import PatchedPhaseDiagram, PDEntry
 from pymatgen.core import Structure
 
-from qmof_thermo import _DEFAULT_PD_FILENAME
+_DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
 LOGGER = getLogger(__name__)
 
