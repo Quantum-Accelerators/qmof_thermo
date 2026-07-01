@@ -77,7 +77,7 @@ def get_energy_above_hull(
 
 
     if energy_type == "odac_mlip":
-        if incompatible := mol_elements - QMOF_COMPATIBLE_ELEMENTS
+        if incompatible := mol_elements - QMOF_COMPATIBLE_ELEMENTS:
             LOGGER.warning(
                 "Structure contains elements whose ODAC "
                 f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
