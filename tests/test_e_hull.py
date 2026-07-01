@@ -54,7 +54,7 @@ def test_relax(unrelaxed_atoms, out_dir, caplog):
     assert atoms.get_volume() != unrelaxed_atoms.get_volume()
     assert atoms.get_volume() == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
-    asert caplog.text == ""
+    assert caplog.text == ""
 
 
 @pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"])
