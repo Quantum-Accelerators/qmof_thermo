@@ -20,7 +20,31 @@ This repository also includes scripts to reproduce key figures in the manuscript
 
 ### Energy Above Hull Calculation
 
-The following script allows users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
+The following code snippets allow users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
+
+If you plan to calculate the energy of your MOF with VASP:
+
+```python
+from ase.io import read
+from qmof_thermo import set_log_level, relax_mof, get_energy_above_hull
+from quacc.recipes.vasp.core import static_job
+
+# Set logging level
+set_log_level("INFO")
+
+# Load your structure
+atoms = read("mof.cif")
+
+# Relax the structure with QMOF settings and get the energy
+output = static_job(atoms, preset="QMOFSet")
+energy = output["results"]["energy"]
+
+# Calculate energy above hull
+e_above_hull = get_energy_above_hull(atoms, energy, energy_type="DFT")
+print(f"Energy above hull: {e_above_hull} eV/atom")
+```
+
+If you plan to calculate the energy of your MOF with an ODAC-trained MLIP:
 
 ```python
 from ase.io import read
@@ -32,11 +56,11 @@ set_log_level("INFO")
 # Load your structure
 atoms = read("mof.cif")
 
-# Optionally, relax the structure and get energy
+# Relax the structure with an ODAC-trained MLIP and get the energy
 energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.05, label="mymof")
 
 # Calculate energy above hull
-e_above_hull = get_energy_above_hull(atoms, energy)
+e_above_hull = get_energy_above_hull(atoms, energy, energy_type="ODAC_MLIP")
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
@@ -107,19 +131,7 @@ python figures/figure_<N>.py
 
 ## FAQ
 
-1. Can I use DFT to compute the energy of my MOF when using the `qmof_thermo` package?
-
-Certainly! Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly.
-
-```python
-from ase.io import read
-from quacc.recipes.vasp.core import static_job
-
-atoms = read("/path/to/my/mof.cif")
-results = static_job(atoms, preset="QMOFSet")
-```
-
-2. Can I use an MLIP not trained on ODAC to relax my MOF when using the `qmof_thermo` package?
+1. Can I use an MLIP not trained on ODAC to relax my MOF when using the `qmof_thermo` package?
 
 Not easily. You are likely better off constructing the convex hull phase diagram with Pymatgen on your own.
 
