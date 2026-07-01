@@ -119,10 +119,10 @@ atoms = read("/path/to/my/mof.cif")
 results = static_job(atoms, preset="QMOFSet")
 ```
 
-2. Can I use a different MLIP with the `qmof_thermo` package?
+2. Can I use a different MLIP with the `qmof_thermo` package? What 
 
 Not easily. You are likely better off constructing the convex hull phase diagram with Pymatgen on your own.
 
-It is critical that the energy for the MOFs and the structures that compose the convex hull are all at the same level of theory, including functional, pseudopotentials, and so on. If you make variations on the settings used (e.g. by using different DFT settings or MLIP), be aware of this fact. The DFT energies of both the reference materials and MOFs in our work are obtained using QMOF settings, which are at the PBE-D3(BJ) level of theory. This is the same as UMA-ODAC and eSEN-ODAC, after filtering out elements with incompatible pseudopotentials between QMOF and ODAC.
+It is critical that the energy for the MOFs and the structures that compose the convex hull are all at the same level of theory, including functional, pseudopotentials, and so on. The DFT-computed energies of both the materials composing the hull and the MOFs in our work are obtained using QMOF settings, which is at the PBE-D3(BJ) level of theory. This is the same functional as UMA-ODAC and eSEN-ODAC, after filtering out elements with incompatible pseudopotentials between QMOF and ODAC.
 
-If you would like to use a completely different MLIP, you will need to to ensure internal consistency between all components of the convex hull diagram. If you use an MLIP that is compatible with the Materials Project (e.g. any [foundation MLIP fine-tuned on OAM](https://matbench-discovery.materialsproject.org/)), you should be able to construct the convex hull using [Pymatgen](https://github.com/materialsproject/pymatgen-core) and the [MP API](https://github.com/materialsproject/api) without needing to use our package.
+If you would like to use a completely different MLIP, you will need to to ensure internal consistency between all materials composing the the convex hull diagram. You can use an MLIP that is compatible with the Materials Project (e.g. any [foundation MLIP fine-tuned on OAM](https://matbench-discovery.materialsproject.org/)) to obtain the energy of your MOF, but you would then need to construct the convex hull using [Pymatgen](https://github.com/materialsproject/pymatgen-core) and the Materials Project data available via the [MP API](https://github.com/materialsproject/api). Our package would not be needed in that scenario.
