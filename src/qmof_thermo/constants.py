@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 UMA_ODAC_ELEMENTS = {
     "H",
     "Li",
