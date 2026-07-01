@@ -66,9 +66,10 @@ def get_energy_above_hull(
 
     if incompatible:
         LOGGER.warning(
-            "Structure contains elements whose UMA-ODAC "
+            "Structure contains elements whose ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-            "Relaxations ran via UMA-ODAC will not be comparable to QMOF DFT references."
+            "If `energy` is obtained from an ODAC MLIP, the results may not be comparable to the QMOF DFT reference "
+            "data. Please refer to https://github.com/Quantum-Accelerators/qmof_thermo#faq for more information."
         )
 
     out_of_chemical_space = mol_elements - QMOF_ELEMENTS
