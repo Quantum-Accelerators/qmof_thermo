@@ -12,7 +12,9 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo import _DEFAULT_PD_JSON, QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
+from qmof_thermo.constants import QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
+
+_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / "patched_phase_diagram.json"
 
 LOGGER = getLogger(__name__)
 
