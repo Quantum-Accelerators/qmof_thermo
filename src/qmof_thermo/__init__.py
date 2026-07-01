@@ -16,6 +16,7 @@ __all__ = [
 logger = logging.getLogger(__name__)
 
 _DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
+_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 UMA_ODAC_ELEMENTS = {
     "H",
