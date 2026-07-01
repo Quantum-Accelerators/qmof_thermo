@@ -17,7 +17,7 @@ from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
 
-from qmof_thermo import QMOF_ODAC_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
+from qmof_thermo.constants import QMOF_ODAC_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
 
 if TYPE_CHECKING:
     from typing import Literal
