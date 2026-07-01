@@ -40,7 +40,7 @@ def relax_mof(
     out_dir: Path | str = Path("data/relaxations"),
 ) -> float:
     """
-    Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
+    Relax an ASE Atoms structure using an ODAC-trained MLIP.
 
     Performs a full relaxation of both atomic positions and cell parameters
     using the BFGS optimizer with a FrechetCellFilter. Outputs are saved to
