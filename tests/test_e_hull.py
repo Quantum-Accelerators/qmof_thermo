@@ -8,8 +8,7 @@ from ase.io import read
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
-from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
+from qmof_thermo import _DEFAULT_PD_FILENAME, get_energy_above_hull, relax_mof, setup_phase_diagrams
 
 FILE_DIR = Path(__file__).parent
 TEST_DATA_DIR = FILE_DIR / "test_data"
@@ -56,9 +55,10 @@ def test_relax(unrelaxed_atoms, out_dir):
     assert energy == pytest.approx(-1191.972703923097)
 
 
+@pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"])
 def test_energy_above_hull_default(relaxed_structure):
     energy = -1191.972703923097
-    thermo = get_energy_above_hull(relaxed_structure, energy, energy_type="ODAC_MLIP")
+    thermo = get_energy_above_hull(relaxed_structure, energy, energy_type=energy_type)
     assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
     assert isinstance(thermo["formation_energy"], float)
     assert isinstance(thermo["decomposition_products"], dict)
