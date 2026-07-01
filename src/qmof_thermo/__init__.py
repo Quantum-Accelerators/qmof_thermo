@@ -90,7 +90,7 @@ UMA_ODAC_ELEMENTS = {
 }
 
 # Elements where UMA-ODAC pseudopotential matches the QMOF pseudopotential
-QMOF_COMPATIBLE_ELEMENTS = {
+QMOF_ODAC_COMPATIBLE_ELEMENTS = {
     "H",
     "He",
     "Li",
