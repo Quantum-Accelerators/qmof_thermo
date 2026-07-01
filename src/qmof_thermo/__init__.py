@@ -4,7 +4,7 @@ import logging
 
 from qmof_thermo.hull import get_energy_above_hull
 from qmof_thermo.phase_diagram import setup_phase_diagrams
-from qmof_thermo.relax import relax_mof
+from qmof_thermo.mlip import relax_mof
 
 __all__ = [
     "get_energy_above_hull",
