@@ -13,11 +13,8 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo import (
-    QMOF_ELEMENTS,
-    QMOF_ODAC_COMPATIBLE_ELEMENTS,
-)
-from qmof_thermo.phase_diagram import  _DEFAULT_PD_FILENAME
+from qmof_thermo import QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
+from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 LOGGER = getLogger(__name__)
 
@@ -75,13 +72,15 @@ def get_energy_above_hull(
             f"{sorted(out_of_chemical_space)}. The convex hull phase diagram will be incomplete."
         )
 
-    if energy_type == "odac_mlip" and (incompatible := mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS):
-            LOGGER.warning(
-                "Structure contains elements whose ODAC "
-                f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-                "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with "
-                "the QMOF DFT reference data."
-            )
+    if energy_type == "odac_mlip" and (
+        incompatible := mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS
+    ):
+        LOGGER.warning(
+            "Structure contains elements whose ODAC "
+            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
+            "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with "
+            "the QMOF DFT reference data."
+        )
 
     ppd = loadfn(serialized_phase_diagram)
 
