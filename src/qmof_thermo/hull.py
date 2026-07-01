@@ -80,8 +80,8 @@ def get_energy_above_hull(
             LOGGER.warning(
                 "Structure contains elements whose ODAC "
                 f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-                "If `energy` is obtained from an ODAC MLIP, the results may not be comparable to the QMOF DFT reference "
-                "data. Please refer to https://github.com/Quantum-Accelerators/qmof_thermo#faq for more information."
+                "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with 
+                the QMOF DFT reference data."
             )
 
     ppd = loadfn(serialized_phase_diagram)
