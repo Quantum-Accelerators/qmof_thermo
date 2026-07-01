@@ -1,5 +1,5 @@
 """
-Module for relaxations.
+Module for MLIP handling.
 """
 
 from __future__ import annotations
