@@ -6,18 +6,14 @@ from __future__ import annotations
 
 from logging import getLogger
 from pathlib import Path
-from typing import Literal, TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from ase import Atoms
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo import (
-    _DEFAULT_PD_FILENAME,
-    QMOF_COMPATIBLE_ELEMENTS,
-    QMOF_ELEMENTS,
-)
+from qmof_thermo import _DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS, QMOF_ELEMENTS
 
 LOGGER = getLogger(__name__)
 
@@ -74,7 +70,6 @@ def get_energy_above_hull(
             "Your structure contains elements that are not present in the QMOF chemical space: "
             f"{sorted(out_of_chemical_space)}. The convex hull phase diagram will be incomplete."
         )
-
 
     if energy_type == "odac_mlip":
         if incompatible := mol_elements - QMOF_COMPATIBLE_ELEMENTS:
