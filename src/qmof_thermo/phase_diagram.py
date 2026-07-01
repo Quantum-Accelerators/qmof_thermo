@@ -18,6 +18,7 @@ LOGGER = getLogger(__name__)
 
 _DEFAULT_PD_FILENAME = "patched_phase_diagram.json"
 
+
 @dataclass
 class HullEntry:
     """
