@@ -57,8 +57,8 @@ def test_relax(unrelaxed_atoms, out_dir, caplog):
     asert caplog.text == ""
 
 
-@pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"], caplog)
-def test_energy_above_hull_default(relaxed_structure, energy_type):
+@pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"])
+def test_energy_above_hull_default(relaxed_structure, energy_type, caplog):
     energy = -1191.972703923097
     thermo = get_energy_above_hull(relaxed_structure, energy, energy_type=energy_type)
     assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
@@ -88,4 +88,3 @@ def test_warning_for_ooqmof_chem_space(caplog):
         get_energy_above_hull(atoms, energy, energy_type="ODAC_MLIP")
 
     assert "elements that are not present in the QMOF chemical space" in caplog.text
-    caplog.clear()
