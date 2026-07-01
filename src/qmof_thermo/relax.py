@@ -93,7 +93,7 @@ def relax_mof(
     if unsupported:
         LOGGER.warning(
             "Structure contains elements not in the ODAC dataset: "
-            f"{sorted(unsupported)}. Predictions for these elements may be unreliable."
+            f"{sorted(unsupported)}. MLIP predictions for these elements may be unreliable."
         )
 
     incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
@@ -101,7 +101,7 @@ def relax_mof(
         LOGGER.warning(
             "Structure contains elements whose ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-            "Energy predictions will not be comparable to QMOF DFT references."
+            "The results may not be compatible between the MLIP and the QMOF-Thermo Database."
         )
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(
