@@ -20,8 +20,6 @@ This repository also includes scripts to reproduce key figures in the manuscript
 
 ### Energy Above Hull Calculation
 
-The following code snippets allow users to relax a CIF file using an MLIP, as well as obtain an energy-above-hull calculation in eV/atom.
-
 If you plan to calculate the energy of your MOF with VASP:
 
 ```python
