@@ -3,3 +3,4 @@ fairchem-core==2.15.0
 monty==2026.2.18
 pandas==3.0.1
 pymatgen==2025.10.7
+quacc==1.3.2
