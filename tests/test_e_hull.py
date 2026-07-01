@@ -93,6 +93,6 @@ def test_warning_for_ooqmof_chem_space(caplog):
         caplog.at_level("WARNING"),
         pytest.raises(ValueError, match=r"Unable to get decomposition"),
     ):
-        get_energy_above_hull(atoms, energy, energy_type="DDFT")
+        get_energy_above_hull(atoms, energy, energy_type="DFT")
 
     assert "elements that are not present in the QMOF chemical space" not in caplog.text
