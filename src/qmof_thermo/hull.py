@@ -14,10 +14,10 @@ from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
 from qmof_thermo import (
-    _DEFAULT_PD_FILENAME,
     QMOF_ELEMENTS,
     QMOF_ODAC_COMPATIBLE_ELEMENTS,
 )
+from qmof_thermo.phase_diagram import  _DEFAULT_PD_FILENAME
 
 LOGGER = getLogger(__name__)
 
