@@ -13,7 +13,7 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo import _DEFAULT_PD_FILENAME, QMOF_COMPATIBLE_ELEMENTS, QMOF_ELEMENTS
+from qmof_thermo import _DEFAULT_PD_FILENAME, QMOF_ODAC_COMPATIBLE_ELEMENTS, QMOF_ELEMENTS
 
 LOGGER = getLogger(__name__)
 
@@ -72,7 +72,7 @@ def get_energy_above_hull(
         )
 
     if energy_type == "odac_mlip":
-        if incompatible := mol_elements - QMOF_COMPATIBLE_ELEMENTS:
+        if incompatible := mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS:
             LOGGER.warning(
                 "Structure contains elements whose ODAC "
                 f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
