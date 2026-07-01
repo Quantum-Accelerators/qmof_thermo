@@ -1,4 +1,5 @@
 """Constant globals used throughout the codebase"""
+
 from __future__ import annotations
 
 UMA_ODAC_ELEMENTS = {
