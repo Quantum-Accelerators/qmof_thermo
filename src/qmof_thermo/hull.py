@@ -75,7 +75,7 @@ def get_energy_above_hull(
             f"{sorted(out_of_chemical_space)}. The convex hull phase diagram will be incomplete."
         )
 
-    
+
     if energy_type == "odac_mlip":
         if incompatible := mol_elements - QMOF_COMPATIBLE_ELEMENTS
             LOGGER.warning(
