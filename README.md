@@ -32,7 +32,7 @@ set_log_level("INFO")
 # Load your structure
 atoms = read("mof.cif")
 
-# Relax the structure and get energy
+# Optionally, relax the structure and get energy
 energy = relax_mof(atoms, model="uma-s-1p1.pt", fmax=0.05, label="mymof")
 
 # Calculate energy above hull
@@ -107,9 +107,9 @@ python figures/figure_<N>.py
 
 ## FAQ
 
-1. Can I use DFT-computed energies for the MOFs with the `qmof_thermo` package?
+1. Can I use DFT to compute the energy of my MOF when using the `qmof_thermo` package?
 
-Certainly. Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly.
+Certainly! Just call `get_energy_above_hull()` with your DFT-calculated energy. However, your DFT calculation will need to be compatible with the QMOF Database settings to use this function. This means, at minimum, using PBE-D3(BJ) and the same pseudopotentials. For convenience, you can use [quacc](https://github.com/Quantum-Accelerators/quacc) to reproduce QMOF Settings exactly.
 
 ```python
 from ase.io import read
@@ -119,10 +119,10 @@ atoms = read("/path/to/my/mof.cif")
 results = static_job(atoms, preset="QMOFSet")
 ```
 
-2. Can I use a different MLIP with the `qmof_thermo` package? What 
+2. Can I use an MLIP not trained on ODAC to relax my MOF when using the `qmof_thermo` package?
 
 Not easily. You are likely better off constructing the convex hull phase diagram with Pymatgen on your own.
 
 It is critical that the energy for the MOFs and the structures that compose the convex hull are all at the same level of theory, including functional, pseudopotentials, and so on. The DFT-computed energies of both the materials composing the hull and the MOFs in our work are obtained using QMOF settings, which is at the PBE-D3(BJ) level of theory. This is the same functional as UMA-ODAC and eSEN-ODAC, after filtering out elements with incompatible pseudopotentials between QMOF and ODAC.
 
-If you would like to use a completely different MLIP, you will need to to ensure internal consistency between all materials composing the the convex hull diagram. You can use an MLIP that is compatible with the Materials Project (e.g. any [foundation MLIP fine-tuned on OAM](https://matbench-discovery.materialsproject.org/)) to obtain the energy of your MOF, but you would then need to construct the convex hull using [Pymatgen](https://github.com/materialsproject/pymatgen-core) and the Materials Project data available via the [MP API](https://github.com/materialsproject/api). Our package would not be needed in that scenario. Refer to the [Materials Project Thermodynamic Stability documentation](https://docs.materialsproject.org/methodology/materials-methodology/thermodynamic-stability) for details.
+If you would like to use a completely different MLIP, you will need to to ensure internal consistency between all materials composing the the convex hull diagram. You can use an MLIP that is compatible with the Materials Project (e.g. any [foundation MLIP fine-tuned on OAM](https://matbench-discovery.materialsproject.org/)) to obtain the energy of your MOF, but you would then need to construct the convex hull using [Pymatgen](https://github.com/materialsproject/pymatgen-core) and the Materials Project data available via the [MP API](https://github.com/materialsproject/api). Our package would not be needed in that scenario. Refer to the [Materials Project Thermodynamic Stability documentation](https://docs.materialsproject.org/methodology/materials-methodology/thermodynamic-stability) for details about constructing the convex hull using Materials Project-compatible data. An MLIP that is not compatible with ODAC or the Materials Project would require recomputing the energies of all the materials composing the convex hull, which is not recommended.
