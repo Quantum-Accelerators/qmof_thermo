@@ -17,7 +17,7 @@ from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
 
-from qmof_thermo import QMOF_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
+from qmof_thermo import QMOF_ODAC_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -96,7 +96,7 @@ def relax_mof(
             f"{sorted(unsupported)}. MLIP predictions for these elements may be unreliable."
         )
 
-    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
+    incompatible = mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS
     if incompatible:
         LOGGER.warning(
             "Structure contains elements whose ODAC "
