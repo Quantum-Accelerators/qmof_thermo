@@ -236,5 +236,6 @@ QMOF_ELEMENTS = {
     "Pu",
 }
 
+
 def set_log_level(level=logging.INFO):
     logger.setLevel(level)
