@@ -66,6 +66,7 @@ def test_energy_above_hull_default(relaxed_structure, energy_type, caplog):
     assert isinstance(thermo["decomposition_products"], dict)
     assert caplog.text == ""
 
+
 def test_energy_above_hull(relaxed_structure, pd_dir):
     energy = -1191.972703923097
     e_above_hull = get_energy_above_hull(
