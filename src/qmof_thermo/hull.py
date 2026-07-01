@@ -13,15 +13,12 @@ from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo import QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
-from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
+from qmof_thermo import _DEFAULT_PD_JSON, QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
 
 LOGGER = getLogger(__name__)
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
-
-_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 
 class HullOutput(TypedDict):
