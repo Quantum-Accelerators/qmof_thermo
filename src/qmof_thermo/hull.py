@@ -80,7 +80,7 @@ def get_energy_above_hull(
             LOGGER.warning(
                 "Structure contains elements whose ODAC "
                 f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-                "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with 
+                "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with
                 the QMOF DFT reference data."
             )
 
