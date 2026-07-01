@@ -58,7 +58,7 @@ def test_relax(unrelaxed_atoms, out_dir):
 
 def test_energy_above_hull_default(relaxed_structure):
     energy = -1191.972703923097
-    thermo = get_energy_above_hull(relaxed_structure, energy)
+    thermo = get_energy_above_hull(relaxed_structure, energy, energy_type="ODAC_MLIP")
     assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
     assert isinstance(thermo["formation_energy"], float)
     assert isinstance(thermo["decomposition_products"], dict)
@@ -69,6 +69,7 @@ def test_energy_above_hull(relaxed_structure, pd_dir):
     e_above_hull = get_energy_above_hull(
         relaxed_structure,
         energy,
+        energy_type="ODAC_MLIP",
         serialized_phase_diagram=pd_dir / _DEFAULT_PD_FILENAME,
     )["energy_above_hull"]
     assert e_above_hull == pytest.approx(0.1921294352092806)
@@ -82,6 +83,15 @@ def test_warning_for_ooqmof_chem_space(caplog):
         caplog.at_level("WARNING"),
         pytest.raises(ValueError, match=r"Unable to get decomposition"),
     ):
-        get_energy_above_hull(atoms, energy)
+        get_energy_above_hull(atoms, energy, energy_type="ODAC_MLIP")
 
     assert "elements that are not present in the QMOF chemical space" in caplog.text
+    caplog.clear()
+
+    with (
+        caplog.at_level("WARNING"),
+        pytest.raises(ValueError, match=r"Unable to get decomposition"),
+    ):
+        get_energy_above_hull(atoms, energy, energy_type="DDFT")
+
+    assert "elements that are not present in the QMOF chemical space" not in caplog.text
