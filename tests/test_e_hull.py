@@ -8,11 +8,7 @@ from ase.io import read
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from qmof_thermo import (
-    get_energy_above_hull,
-    relax_mof,
-    setup_phase_diagrams,
-)
+from qmof_thermo import get_energy_above_hull, relax_mof, setup_phase_diagrams
 from qmof_thermo.phase_diagram import _DEFAULT_PD_FILENAME
 
 FILE_DIR = Path(__file__).parent
