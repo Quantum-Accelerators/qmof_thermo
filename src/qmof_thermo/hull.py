@@ -59,8 +59,8 @@ def get_energy_above_hull(
     """
 
     energy_type = energy_type.lower()
-    if energy_type not in ("dft", "odca_mlip"):
-        raise ValueError(f"Unsupported {energy_type} from one of 'DFT' or 'ODAC_MLIP'")
+    if energy_type not in ("dft", "odac_mlip"):
+        raise ValueError(f"Unsupported energy_type of {energy_type} from one of 'DFT' or 'ODAC_MLIP'")
 
     if isinstance(struct, Atoms):
         struct = AseAtomsAdaptor.get_structure(struct)
