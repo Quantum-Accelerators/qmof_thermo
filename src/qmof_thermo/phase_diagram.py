@@ -13,6 +13,7 @@ import pandas as pd
 from monty.serialization import dumpfn
 from pymatgen.analysis.phase_diagram import PatchedPhaseDiagram, PDEntry
 from pymatgen.core import Structure
+
 from qmof_thermo import _DEFAULT_PD_FILENAME
 
 LOGGER = getLogger(__name__)
