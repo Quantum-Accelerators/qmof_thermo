@@ -5,7 +5,6 @@ Module for calculating energy above hull.
 from __future__ import annotations
 
 from logging import getLogger
-from pathlib import Path
 from typing import TYPE_CHECKING, Literal, TypedDict
 
 from ase import Atoms
@@ -18,6 +17,8 @@ from qmof_thermo import _DEFAULT_PD_JSON, QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_EL
 LOGGER = getLogger(__name__)
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from pymatgen.core import Structure
 
 
