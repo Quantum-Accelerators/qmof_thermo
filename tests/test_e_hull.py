@@ -57,7 +57,7 @@ def test_relax(unrelaxed_atoms, out_dir):
 
 
 @pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"])
-def test_energy_above_hull_default(relaxed_structure):
+def test_energy_above_hull_default(relaxed_structure, energy_type):
     energy = -1191.972703923097
     thermo = get_energy_above_hull(relaxed_structure, energy, energy_type=energy_type)
     assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
