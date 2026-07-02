@@ -24,7 +24,7 @@ If you plan to calculate the energy of your MOF with VASP, first [set up quacc](
 
 ```python
 from ase.io import read
-from qmof_thermo import set_log_level, relax_mof, get_energy_above_hull
+from qmof_thermo import set_log_level, get_energy_above_hull
 from quacc.recipes.vasp.core import static_job
 
 # Set logging level
