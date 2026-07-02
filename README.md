@@ -42,7 +42,7 @@ e_above_hull = get_energy_above_hull(atoms, energy, energy_type="DFT")
 print(f"Energy above hull: {e_above_hull} eV/atom")
 ```
 
-If you plan to calculate the energy of your MOF with an ODAC-trained MLIP:
+If you plan to calculate the energy of your MOF with an ODAC-trained MLIP, first [set up the MLIP](https://github.com/Quantum-Accelerators/qmof_thermo/tree/main#2-mlip-setup) and then run the following:
 
 ```python
 from ase.io import read
