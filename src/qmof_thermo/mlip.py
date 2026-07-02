@@ -1,5 +1,5 @@
 """
-Module for relaxations.
+Module for MLIP handling.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from fairchem.core import FAIRChemCalculator
 from fairchem.core.units.mlip_unit.api.inference import UMATask
 from monty.serialization import dumpfn
 
-from qmof_thermo.phase_diagram import QMOF_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
+from qmof_thermo.constants import QMOF_ODAC_COMPATIBLE_ELEMENTS, UMA_ODAC_ELEMENTS
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -40,7 +40,7 @@ def relax_mof(
     out_dir: Path | str = Path("data/relaxations"),
 ) -> float:
     """
-    Relax an ASE Atoms structure using a FAIRChem MLIP calculator.
+    Relax an ASE Atoms structure using an ODAC-trained MLIP.
 
     Performs a full relaxation of both atomic positions and cell parameters
     using the BFGS optimizer with a FrechetCellFilter. Outputs are saved to
@@ -93,15 +93,15 @@ def relax_mof(
     if unsupported:
         LOGGER.warning(
             "Structure contains elements not in the ODAC dataset: "
-            f"{sorted(unsupported)}. Predictions for these elements may be unreliable."
+            f"{sorted(unsupported)}. MLIP predictions for these elements may be unreliable."
         )
 
-    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
+    incompatible = mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS
     if incompatible:
         LOGGER.warning(
             "Structure contains elements whose ODAC "
             f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-            "Energy predictions will not be comparable to QMOF DFT references."
+            "The results may not be compatible between the MLIP and the QMOF-Thermo Database."
         )
 
     atoms.calc = FAIRChemCalculator.from_model_checkpoint(

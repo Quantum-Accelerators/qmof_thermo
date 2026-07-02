@@ -6,25 +6,21 @@ from __future__ import annotations
 
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from ase import Atoms
 from monty.serialization import loadfn
 from pymatgen.analysis.phase_diagram import PDEntry
 from pymatgen.io.ase import AseAtomsAdaptor
 
-from qmof_thermo.phase_diagram import (
-    _DEFAULT_PD_FILENAME,
-    QMOF_COMPATIBLE_ELEMENTS,
-    QMOF_ELEMENTS,
-)
+from qmof_thermo.constants import QMOF_ELEMENTS, QMOF_ODAC_COMPATIBLE_ELEMENTS
+
+_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / "patched_phase_diagram.json"
 
 LOGGER = getLogger(__name__)
 
 if TYPE_CHECKING:
     from pymatgen.core import Structure
-
-_DEFAULT_PD_JSON = Path(__file__).parent.resolve() / _DEFAULT_PD_FILENAME
 
 
 class HullOutput(TypedDict):
@@ -36,6 +32,8 @@ class HullOutput(TypedDict):
 def get_energy_above_hull(
     struct: Structure | Atoms,
     energy: float,
+    *,
+    energy_type: Literal["DFT", "ODAC_MLIP"],
     serialized_phase_diagram: Path | str = _DEFAULT_PD_JSON,
 ) -> HullOutput:
     """
@@ -48,6 +46,8 @@ def get_energy_above_hull(
         If an Atoms object is provided, it will be converted to a Structure.
     energy
         Total relaxed energy of the structure in eV.
+    energy_type
+        How the energy data was sourced, either from "DFT" or "ODAC_MLIP"
     serialized_phase_diagram
         Path to the directory containing the precomputed PatchedPhaseDiagram.
         Default is the phase diagram bundled with the package.
@@ -58,25 +58,32 @@ def get_energy_above_hull(
         A dictionary containing energy above the convex hull, formation energy, and decomposition products.
     """
 
+    energy_type = energy_type.lower()
+    if energy_type not in ("dft", "odac_mlip"):
+        raise ValueError(
+            f"Unsupported energy_type of {energy_type} from one of 'DFT' or 'ODAC_MLIP'"
+        )
+
     if isinstance(struct, Atoms):
         struct = AseAtomsAdaptor.get_structure(struct)
 
     mol_elements = {str(el) for el in struct.composition.elements}
-    incompatible = mol_elements - QMOF_COMPATIBLE_ELEMENTS
-
-    if incompatible:
-        LOGGER.warning(
-            "Structure contains elements whose ODAC "
-            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
-            "If `energy` is obtained from an ODAC MLIP, the results may not be comparable to the QMOF DFT reference "
-            "data. Please refer to https://github.com/Quantum-Accelerators/qmof_thermo#faq for more information."
-        )
 
     out_of_chemical_space = mol_elements - QMOF_ELEMENTS
     if out_of_chemical_space:
         LOGGER.warning(
-            "Structure contains elements that are not present in the QMOF chemical space: "
-            f"{sorted(out_of_chemical_space)}. Results may not be comparable to QMOF convex hull phase diagram."
+            "Your structure contains elements that are not present in the QMOF chemical space: "
+            f"{sorted(out_of_chemical_space)}. The convex hull phase diagram will be incomplete."
+        )
+
+    if energy_type == "odac_mlip" and (
+        incompatible := mol_elements - QMOF_ODAC_COMPATIBLE_ELEMENTS
+    ):
+        LOGGER.warning(
+            "Structure contains elements whose ODAC "
+            f"pseudopotentials do not match QMOF's: {sorted(incompatible)}. "
+            "If `energy` is obtained from an ODAC MLIP, the results will likely not be compatible with "
+            "the QMOF DFT reference data."
         )
 
     ppd = loadfn(serialized_phase_diagram)
