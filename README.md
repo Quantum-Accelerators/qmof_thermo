@@ -8,7 +8,7 @@ A toolkit for calculating thermodynamic stability (i.e. formation energy, energy
 
 Note: For the QMOF-Thermo Database, please refer to the data available on [Figshare](https://doi.org/10.6084/m9.figshare.13147324).
 
-Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability" (2026).
+Reference: B. Dallmann, A. Saha, A.S. Rosen, "Predicting the Thermodynamic Limits of Metal–Organic Framework Metastability", _J. Am. Chem. Soc._, 19, 19487--19501 (2026). DOI: [https://doi.org/10.1021/jacs.5c20253](https://doi.org/10.1021/jacs.5c20253)
 
 ## Overview
 
