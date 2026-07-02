@@ -70,7 +70,7 @@ print(f"Energy above hull: {e_above_hull} eV/atom")
 pip install git+https://github.com/Quantum-Accelerators/qmof_thermo.git
 ```
 
-### 2. MLIP Setup
+### 2. Optional: MLIP Setup
 
 Refer to [FairChem's documentation](https://fair-chem.github.io/) for detailed instructions on using their models.
 
