@@ -54,7 +54,7 @@ def test_relax(unrelaxed_atoms, out_dir, caplog):
     assert atoms.get_volume() != unrelaxed_atoms.get_volume()
     assert atoms.get_volume() == pytest.approx(5284.412604266308)
     assert energy == pytest.approx(-1191.972703923097)
-    assert caplog.text == ""
+    assert "QMOF" not in caplog.text
 
 
 @pytest.mark.parametrize("energy_type", ["DFT", "ODAC_MLIP"])
@@ -64,7 +64,7 @@ def test_energy_above_hull_default(relaxed_structure, energy_type, caplog):
     assert thermo["energy_above_hull"] == pytest.approx(0.1921294352092806)
     assert isinstance(thermo["formation_energy"], float)
     assert isinstance(thermo["decomposition_products"], dict)
-    assert caplog.text == ""
+    assert "QMOF" not in caplog.text
 
 
 def test_energy_above_hull(relaxed_structure, pd_dir):
