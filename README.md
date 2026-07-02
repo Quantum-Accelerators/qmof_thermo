@@ -20,7 +20,7 @@ This repository also includes scripts to reproduce key figures in the manuscript
 
 ### Energy Above Hull Calculation
 
-If you plan to calculate the energy of your MOF with VASP:
+If you plan to calculate the energy of your MOF with VASP, first [set up quacc](https://quantum-accelerators.github.io/quacc/install/codes.html#vasp) and then run the following:
 
 ```python
 from ase.io import read
