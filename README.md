@@ -25,7 +25,7 @@ If you plan to calculate the energy of your MOF with VASP, first [set up quacc](
 ```python
 from ase.io import read
 from qmof_thermo import set_log_level, get_energy_above_hull
-from quacc.recipes.vasp.core import static_job
+from quacc.recipes.vasp.core import relax_job
 
 # Set logging level
 set_log_level("INFO")
@@ -34,7 +34,7 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure with QMOF settings and get the energy
-output = static_job(atoms, preset="QMOFSet")
+output = relax_job(atoms, preset="QMOFSet")
 energy = output["results"]["energy"]
 
 # Calculate energy above hull
