@@ -34,7 +34,7 @@ set_log_level("INFO")
 atoms = read("mof.cif")
 
 # Relax the structure with QMOF settings and get the energy
-output = relax_job(atoms, preset="QMOFSet")
+output = relax_job(atoms, preset="QMOFSet", relax_cell=True)
 energy = output["results"]["energy"]
 
 # Calculate energy above hull
